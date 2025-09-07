@@ -81,3 +81,6 @@ if pizza_type in pizza_types:
             print("Image capture completed.")
             cv2.destroyAllWindows()
             cap.release()
+
+
+# gezien
