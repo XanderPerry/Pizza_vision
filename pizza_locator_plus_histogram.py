@@ -1,7 +1,8 @@
-import cv2
 import numpy as np
 import glob
 import matplotlib.pyplot as plt
+
+import cv2
 
 def plot_color_histogram(cropped_image):
     hsv = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2HSV)
@@ -43,9 +44,9 @@ def plot_color_histogram(cropped_image):
 
 # Main loop
 i = 50
-for filename in glob.glob("/HU/Jaar3/Beeldherkening/data set/data/che/train/**/*.jpg", recursive=True):
+for filename in glob.glob("data/che/train/**/*.jpg", recursive=True):
     if i < 50:
-        i += 1 
+        i += 1
         continue
     else:
         i = 0
