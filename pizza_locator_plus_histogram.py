@@ -6,8 +6,8 @@ import cv2
 
 import whitebalance
 
-def plot_color_histogram(cropped_image):
-    hsv = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2HSV)
+def plot_color_histogram(img_cropped):
+    hsv = cv2.cvtColor(img_cropped, cv2.COLOR_BGR2HSV)
 
     # Define HSV ranges
     lower_yellow = np.array([20, 50, 100])
@@ -27,37 +27,44 @@ def plot_color_histogram(cropped_image):
     # Count pixels
     yellow_pixels = cv2.countNonZero(mask_yellow)
     red_pixels = cv2.countNonZero(mask_red)
-    total_pixels = cropped_image.shape[0] * cropped_image.shape[1]
+    total_pixels = img_cropped.shape[0] * img_cropped.shape[1]
     other_pixels = total_pixels - yellow_pixels - red_pixels
 
     # Plot histogram
-    categories = ['Red', 'Yellow', 'Other']
-    counts = [red_pixels, yellow_pixels, other_pixels]
-    colors = ['red', 'gold', 'gray']
+    # categories = ['Red', 'Yellow', 'Other']
+    # counts = [red_pixels, yellow_pixels, other_pixels]
+    # colors = ['red', 'gold', 'gray']
 
-    plt.figure(figsize=(8, 5))
-    plt.bar(categories, counts, color=colors)
-    plt.title('Color Pixel Count in Cropped Pizza Region')
-    plt.xlabel('Color')
-    plt.ylabel('Pixel Count')
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.tight_layout()
-    plt.show()
+    # plt.figure(figsize=(8, 5))
+    # plt.bar(categories, counts, color=colors)
+    # plt.title('Color Pixel Count in Cropped Pizza Region')
+    # plt.xlabel('Color')
+    # plt.ylabel('Pixel Count')
+    # plt.grid(axis='y', linestyle='--', alpha=0.7)
+    # plt.tight_layout()
+    # plt.show()
 
     # Plot histogram alternative
-    plt.figure(figsize=(8, 5))
-    plt.hist([red_pixels, yellow_pixels, other_pixels], bins=3, color=colors, rwidth=0.8)
-    plt.xticks([0, 1, 2], categories)
-    plt.title('Color Pixel Count in Cropped Pizza Region')
-    plt.xlabel('Color')
-    plt.ylabel('Pixel Count')
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.tight_layout()
+    plt.figure(figsize=(10, 6))
+
+    plt.subplot(1, 2, 1)
+    for j, color in enumerate(['r', 'g', 'b']):
+        histr = cv2.calcHist([img_cropped],[j],None,[256],[0,256])
+        plt.plot(histr, color = color)
+        plt.xlim([0,256])
+    plt.title('RGB Histogram')
+
+    plt.subplot(1, 2, 2)
+    for j, color in enumerate(['r', 'g', 'b']):
+        histr = cv2.calcHist([hsv],[j],None,[256],[0,256])
+        plt.plot(histr, color = color)
+        plt.xlim([0,256])
+    plt.title('HSV Histogram')
     plt.show()
 
 # Main loop
 i = 50
-for filename in glob.glob("data/che/train/**/*.jpg", recursive=True):
+for filename in glob.glob("data/sal/train/**/*.jpg", recursive=True):
     if i < 50:
         i += 1
         continue
