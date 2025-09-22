@@ -5,15 +5,15 @@ Created on Mon Sep  8 15:13:31 2025
 @author: Xande
 """
 
+import glob
 import cv2
 import numpy as np
-import glob
 #import copy
 
 i = 50
 for filename in glob.glob("data/che/train/**/*.jpg", recursive=True):
     if i < 50:
-        i+=1 
+        i+=1
         continue
     else:
         i=0
