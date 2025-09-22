@@ -31,18 +31,18 @@ def plot_color_histogram(img_cropped):
     other_pixels = total_pixels - yellow_pixels - red_pixels
 
     # Plot histogram
-    # categories = ['Red', 'Yellow', 'Other']
-    # counts = [red_pixels, yellow_pixels, other_pixels]
-    # colors = ['red', 'gold', 'gray']
+    categories = ['Red', 'Yellow', 'Other']
+    counts = [red_pixels, yellow_pixels, other_pixels]
+    colors = ['red', 'gold', 'gray']
 
-    # plt.figure(figsize=(8, 5))
-    # plt.bar(categories, counts, color=colors)
-    # plt.title('Color Pixel Count in Cropped Pizza Region')
-    # plt.xlabel('Color')
-    # plt.ylabel('Pixel Count')
-    # plt.grid(axis='y', linestyle='--', alpha=0.7)
-    # plt.tight_layout()
-    # plt.show()
+    plt.figure(figsize=(8, 5))
+    plt.bar(categories, counts, color=colors)
+    plt.title('Color Pixel Count in Cropped Pizza Region')
+    plt.xlabel('Color')
+    plt.ylabel('Pixel Count')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    plt.show()
 
     # Plot histogram alternative
     plt.figure(figsize=(10, 6))
