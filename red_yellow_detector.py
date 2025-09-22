@@ -8,10 +8,10 @@ Created on Mon Sep  8 15:13:31 2025
 import cv2
 import numpy as np
 import glob
-import copy
+#import copy
 
 i = 50
-for filename in glob.glob("image_capture/data/che/train/**/*.jpg", recursive=True):
+for filename in glob.glob("data/che/train/**/*.jpg", recursive=True):
     if i < 50:
         i+=1 
         continue
