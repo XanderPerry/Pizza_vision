@@ -47,3 +47,64 @@ def plot_hsv_histogram(img, exclude_black=True):
         plt.plot(hist, color=col)
         plt.xlim([1, 256])
     plt.show()
+
+def get_median_hue(img, exclude_black=True):
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    
+    if exclude_black:
+        mask = cv2.threshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 0, 255, cv2.THRESH_BINARY)[1]
+        hue_values = hsv[:,:,0][mask > 0]
+    else:
+        hue_values = hsv[:,:,0].flatten()
+    
+    if hue_values.size == 0:
+        return None  # No valid hue values found
+    
+    median_hue = np.median(hue_values)
+    return median_hue
+
+def get_hue_distribution(img, exclude_black=True):
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    
+    if exclude_black:
+        mask = cv2.threshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 0, 255, cv2.THRESH_BINARY)[1]
+        hue_values = hsv[:,:,0][mask > 0]
+    else:
+        hue_values = hsv[:,:,0].flatten()
+
+    hue_dist = np.bincount(hue_values//10, minlength=18)  # 18 bins for hue (0-179)
+    return hue_dist
+    
+    
+
+def get_median_sat(img, exclude_black=True):
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    
+    # Create mask to exclude black pixels
+    if exclude_black:
+        mask = cv2.threshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 0, 255, cv2.THRESH_BINARY)[1]
+        sat_values = hsv[:,:,1][mask > 0]
+    else:
+        sat_values = hsv[:,:,1].flatten()
+    
+    if sat_values.size == 0:
+        return None  # No valid saturation values found
+    
+    median_sat = np.median(sat_values)
+    return median_sat
+
+def get_median_val(img, exclude_black=True):
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    
+    # Create mask to exclude black pixels
+    if exclude_black:
+        mask = cv2.threshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 0, 255, cv2.THRESH_BINARY)[1]
+        val_values = hsv[:,:,2][mask > 0]
+    else:
+        val_values = hsv[:,:,2].flatten()
+
+    if val_values.size == 0:
+        return None  # No valid value values found
+    
+    median_val = np.median(val_values)
+    return median_val

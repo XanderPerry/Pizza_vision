@@ -37,35 +37,32 @@ def calc_canny(img_gray):
     return edges
 
 def hough_detect_circle(img_gray, img):
-    img_gray = cv2.medianBlur(img_gray, 5)
-    
-    output = img.copy()
-    
+    # Use a faster blur (box filter) instead of medianBlur
+    img_gray = cv2.blur(img_gray, (5, 5))
+
     # Detect circles
     circles = cv2.HoughCircles(
         img_gray,
         cv2.HOUGH_GRADIENT,
         dp=1,
-        minDist=100,      
-        param1=100,         
-        param2=20,       
-        minRadius=100,       
+        minDist=200,
+        param1=100,
+        param2=20,
+        minRadius=100,
         maxRadius=300
     )
-    
-    # Draw only the first detected circle
+
     if circles is not None:
         circles = np.uint16(np.around(circles))
         x, y, r = circles[0][0]
-        # cv2.circle(output, (x, y), r, (0, 255, 0), 2)  # Circle outline
-        # cv2.circle(output, (x, y), 2, (0, 0, 255), 3)  # Center point
 
-        mask_circle = np.zeros_like(img)
-        mask_circle = cv2.circle(mask_circle, (x, y), (int)(r*1.01), (255, 255, 255), -1)
-        cv2.imshow("Circle mask", mask_circle)
-        output = cv2.bitwise_and(output, mask_circle)
+        # Use a single-channel mask for speed
+        mask_circle = np.zeros(img.shape[:2], dtype=np.uint8)
+        cv2.circle(mask_circle, (x, y), int(r * 1.01), 255, -1)
+        output = cv2.bitwise_and(img, img, mask=mask_circle)
+        return output
 
-    return output
+    return img
 
 def cutout_circle(img, edge_detection="sobel"):
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -82,13 +79,13 @@ def cutout_circle(img, edge_detection="sobel"):
     return img_circle
 
 def color_mask(img):
-    img_whitebalanced = whitebalance.white_balance_loops(img)
-    cv2.imshow("Pizza white balanced", img_whitebalanced)
+    # img_whitebalanced = whitebalance.white_balance_loops(img)
+    # cv2.imshow("Pizza white balanced", img_whitebalanced)
 
-    img_blurred = cv2.GaussianBlur(img_whitebalanced, (5, 5), 0)
-    cv2.imshow("Pizza blurred", img_blurred)
+    img_blurred = cv2.GaussianBlur(img, (5, 5), 0)
+    # cv2.imshow("Pizza blurred", img_blurred)
     hsv = cv2.cvtColor(img_blurred, cv2.COLOR_BGR2HSV)
-    cv2.imshow("Pizza hsv", hsv)
+    # cv2.imshow("Pizza hsv", hsv)
 
     # Define yellow borders
     lower_yellow = np.array([20, 50, 100])
