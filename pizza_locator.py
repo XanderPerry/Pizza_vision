@@ -11,7 +11,7 @@ import glob
 
 import cv2
 
-import circle_detector
+import pizza_cutter
 import whitebalance
 
 i = 50
@@ -94,15 +94,15 @@ for filename in glob.glob("data/sal/train/**/*.jpg", recursive=True):
         cropped_gray = cv2.cvtColor(cropped, cv2.COLOR_BGR2GRAY)
    
         # Calculate edge detection algorithms
-        cropped_gray_sobel = circle_detector.calc_sobel(cropped_gray)
-        cropped_gray_laplacian = circle_detector.calc_laplacian(cropped_gray)
-        cropped_gray_canny= circle_detector.calc_canny(cropped_gray)
+        cropped_gray_sobel = pizza_cutter.calc_sobel(cropped_gray)
+        cropped_gray_laplacian = pizza_cutter.calc_laplacian(cropped_gray)
+        cropped_gray_canny= pizza_cutter.calc_canny(cropped_gray)
    
         # Calculate circle detection algorithms
-        cropped_hough_circle = circle_detector.hough_detect_circle(cropped_gray, cropped)
-        cropped_hough_circle_sobel = circle_detector.hough_detect_circle(cropped_gray_sobel, cropped)
-        cropped_hough_circle_laplacian = circle_detector.hough_detect_circle(cropped_gray_laplacian, cropped)
-        cropped_hough_circle_canny = circle_detector.hough_detect_circle(cropped_gray_canny, cropped)
+        cropped_hough_circle = pizza_cutter.hough_detect_circle(cropped_gray, cropped)
+        cropped_hough_circle_sobel = pizza_cutter.hough_detect_circle(cropped_gray_sobel, cropped)
+        cropped_hough_circle_laplacian = pizza_cutter.hough_detect_circle(cropped_gray_laplacian, cropped)
+        cropped_hough_circle_canny = pizza_cutter.hough_detect_circle(cropped_gray_canny, cropped)
 
         # Display results
         cv2.imshow("Cropped", cropped)
