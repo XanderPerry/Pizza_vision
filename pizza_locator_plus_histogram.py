@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 
 import cv2
 
+import whitebalance
+
 def plot_color_histogram(cropped_image):
     hsv = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2HSV)
 
@@ -42,6 +44,17 @@ def plot_color_histogram(cropped_image):
     plt.tight_layout()
     plt.show()
 
+    # Plot histogram alternative
+    plt.figure(figsize=(8, 5))
+    plt.hist([red_pixels, yellow_pixels, other_pixels], bins=3, color=colors, rwidth=0.8)
+    plt.xticks([0, 1, 2], categories)
+    plt.title('Color Pixel Count in Cropped Pizza Region')
+    plt.xlabel('Color')
+    plt.ylabel('Pixel Count')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    plt.show()
+
 # Main loop
 i = 50
 for filename in glob.glob("data/che/train/**/*.jpg", recursive=True):
@@ -51,9 +64,13 @@ for filename in glob.glob("data/che/train/**/*.jpg", recursive=True):
     else:
         i = 0
 
-    image = cv2.imread(filename)
-    blurred = cv2.GaussianBlur(image, (5, 5), 0)
-    hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+    img = cv2.imread(filename)
+
+    img_whitebalanced = whitebalance.white_balance_loops(img)
+    cv2.imshow("Pizza white balanced", img_whitebalanced)
+
+    img_blurred = cv2.GaussianBlur(img_whitebalanced, (5, 5), 0)
+    hsv = cv2.cvtColor(img_blurred, cv2.COLOR_BGR2HSV)
 
     # Define color ranges
     lower_yellow = np.array([20, 50, 100])
@@ -78,13 +95,13 @@ for filename in glob.glob("data/che/train/**/*.jpg", recursive=True):
         area = cv2.contourArea(cnt)
         if area > 50000:
             x, y, w, h = cv2.boundingRect(cnt)
-            cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 3)
+            cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 3)
 
             # Crop the detected region
-            last_cropped = image[y:y+h, x:x+w]
+            last_cropped = img[y:y+h, x:x+w]
 
     # Show detection result
-    cv2.imshow("Pizza Detection", image)
+    cv2.imshow("Pizza Detection", img)
 
     # If a valid cropped region was found, show it and plot histogram
     if last_cropped is not None:

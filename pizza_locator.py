@@ -6,25 +6,13 @@ Created on Mon Sep  8 15:13:31 2025
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
 import glob
 
 import cv2
 
 import circle_detector
-
-def white_balance_loops(img):
-    result = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
-    avg_a = np.average(result[:, :, 1])
-    avg_b = np.average(result[:, :, 2])
-    for x in range(result.shape[0]):
-        for y in range(result.shape[1]):
-            l, a, b = result[x, y, :]
-            # fix for CV correction
-            l *= 100 / 255.0
-            result[x, y, 1] = a - ((avg_a - 128) * (l / 100.0) * 1.1)
-            result[x, y, 2] = b - ((avg_b - 128) * (l / 100.0) * 1.1)
-    result = cv2.cvtColor(result, cv2.COLOR_LAB2BGR)
-    return result
+import whitebalance
 
 i = 50
 for filename in glob.glob("data/sal/train/**/*.jpg", recursive=True):
@@ -37,7 +25,7 @@ for filename in glob.glob("data/sal/train/**/*.jpg", recursive=True):
     # Load image
     img = cv2.imread(filename)
 
-    img_whitebalanced = white_balance_loops(img)
+    img_whitebalanced = whitebalance.white_balance_loops(img)
     cv2.imshow("Pizza white balanced", img_whitebalanced)
 
     img_blurred = cv2.GaussianBlur(img_whitebalanced, (5, 5), 0)

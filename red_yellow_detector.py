@@ -10,6 +10,8 @@ import cv2
 import numpy as np
 #import copy
 
+import whitebalance
+
 i = 50
 for filename in glob.glob("data/che/train/**/*.jpg", recursive=True):
     if i < 50:
@@ -19,10 +21,14 @@ for filename in glob.glob("data/che/train/**/*.jpg", recursive=True):
         i=0
 
     # Load image
-    image = cv2.imread(filename)
-    blurred = cv2.GaussianBlur(image, (5, 5), 0)
-    cv2.imshow("Pizza blurred", blurred)
-    hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+    img = cv2.imread(filename)
+
+    img_whitebalanced = whitebalance.white_balance_loops(img)
+    cv2.imshow("Pizza white balanced", img_whitebalanced)
+
+    img_blurred = cv2.GaussianBlur(img_whitebalanced, (5, 5), 0)
+    cv2.imshow("Pizza blurred", img_blurred)
+    hsv = cv2.cvtColor(img_blurred, cv2.COLOR_BGR2HSV)
     cv2.imshow("Pizza hsv", hsv)
 
     # Define yellow borders
@@ -58,11 +64,11 @@ for filename in glob.glob("data/che/train/**/*.jpg", recursive=True):
         area = cv2.contourArea(cnt)
         if area > 50000:  # Ignore small areas
             x, y, w, h = cv2.boundingRect(cnt)
-            cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 3)
+            cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 3)
             
     
     # Show result
-    cv2.imshow("Pizza Detection", image)
+    cv2.imshow("Pizza Detection", img)
     key = cv2.waitKey(0)
     if key & 0xFF == ord('q'):
         print("Manual interruption by user.")
