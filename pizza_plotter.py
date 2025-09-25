@@ -48,7 +48,7 @@ def plot_hsv_histogram(img, exclude_black=True):
         plt.xlim([1, 256])
     plt.show()
 
-def get_median_hue(img, exclude_black=True):
+def get_mean_hue(img, exclude_black=True):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     
     if exclude_black:
@@ -59,9 +59,9 @@ def get_median_hue(img, exclude_black=True):
     
     if hue_values.size == 0:
         return None  # No valid hue values found
-    
-    median_hue = np.median(hue_values)
-    return median_hue
+
+    mean_hue = np.mean(hue_values)
+    return mean_hue
 
 def get_hue_distribution(img, exclude_black=True):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -77,7 +77,7 @@ def get_hue_distribution(img, exclude_black=True):
     
     
 
-def get_median_sat(img, exclude_black=True):
+def get_mean_sat(img, exclude_black=True):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     
     # Create mask to exclude black pixels
@@ -89,11 +89,11 @@ def get_median_sat(img, exclude_black=True):
     
     if sat_values.size == 0:
         return None  # No valid saturation values found
-    
-    median_sat = np.median(sat_values)
-    return median_sat
 
-def get_median_val(img, exclude_black=True):
+    mean_sat = np.mean(sat_values)
+    return mean_sat
+
+def get_mean_val(img, exclude_black=True):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     
     # Create mask to exclude black pixels
@@ -106,5 +106,23 @@ def get_median_val(img, exclude_black=True):
     if val_values.size == 0:
         return None  # No valid value values found
     
-    median_val = np.median(val_values)
-    return median_val
+    mean_val = np.mean(val_values)
+    return mean_val
+
+def get_edge_percentage(img, ignore_black=True):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    
+    if ignore_black:
+        mask = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1]
+        gray = cv2.bitwise_and(gray, gray, mask=mask)
+    
+    edges = cv2.Canny(gray, 50, 100)
+    # cv2.imshow("Canny Edges", edges)
+    edge_pixels = np.sum(edges > 0)
+    total_pixels = np.sum(mask > 0) if ignore_black else img.shape[0] * img.shape[1]
+    
+    if total_pixels == 0:
+        return 0.0  # Avoid division by zero
+    
+    edge_percentage = (edge_pixels / total_pixels) * 100
+    return edge_percentage
