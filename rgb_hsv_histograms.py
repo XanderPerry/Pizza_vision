@@ -22,6 +22,7 @@ for kind in KINDS:
     i = 0
     for filename in glob.glob("data/" + kind + "/train/**/*.jpg", recursive=True):
         # # Load image
+        print(filename)
         img = cv2.imread(filename)
         # cv2.imshow("Original image", img)
 
@@ -61,7 +62,7 @@ for kind in KINDS:
         #     exit(0)
 
         i += 1
-        if i > 100:
+        if i > 10:
             break
         cv2.destroyAllWindows()
 
