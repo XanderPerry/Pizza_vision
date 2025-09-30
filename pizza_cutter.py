@@ -1,9 +1,11 @@
 import numpy as np
+import time
 
 import cv2
-import glob
 
-import whitebalance
+IMG_W = 640
+IMG_H = 480
+
 
 def calc_sobel(img_gray):
     # Apply Sobel operator
@@ -65,7 +67,11 @@ def hough_detect_circle(img_gray, img):
     return img
 
 def cutout_circle(img, edge_detection="sobel"):
+    # time_start = time.time()
+
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # time_gray = time.time()
 
     if edge_detection == "sobel":
         img_gray = calc_sobel(img_gray)
@@ -74,31 +80,37 @@ def cutout_circle(img, edge_detection="sobel"):
     elif edge_detection == "canny":
         img_gray = calc_canny(img_gray)
     
+    # time_edge = time.time()
+    
     img_circle = hough_detect_circle(img_gray, img)
     
+    # time_end = time.time()
+    # print("Duration of gray conversion: " + str(time_gray - time_start))
+    # print("Duration of " + edge_detection + " edge detection: " + str(time_edge - time_gray))
+    # print("Duration of hough circles: " + str(time_end - time_edge))
+    # print("Total duration of circle cropping: " + str(time_end - time_start) + "\n")
+
     return img_circle
 
 def color_mask(img):
-    # img_whitebalanced = whitebalance.white_balance_loops(img)
-    # cv2.imshow("Pizza white balanced", img_whitebalanced)
-
     img_blurred = cv2.GaussianBlur(img, (5, 5), 0)
     # cv2.imshow("Pizza blurred", img_blurred)
     hsv = cv2.cvtColor(img_blurred, cv2.COLOR_BGR2HSV)
     # cv2.imshow("Pizza hsv", hsv)
 
     # Define yellow borders
-    lower_yellow = np.array([20, 50, 100])
-    upper_yellow = np.array([30, 255, 255])
+    upper_yellow = np.array([55, 255, 255])
+    lower_yellow = np.array([15, 40, 165])
 
     # Define red borders part 1
-    lower_red1 = np.array([0, 50, 100])
-    upper_red1 = np.array([20, 255, 255])
-
-    lower_red2 = np.array([160, 50, 100])
-    upper_red2 = np.array([179, 255, 255])
+    upper_red1 = np.array([15, 255, 255])
+    lower_red1 = np.array([0, 100, 65])
 
     # Define red borders part 2
+    upper_red2 = np.array([180, 255, 255])
+    lower_red2 = np.array([160, 40, 60])
+
+    # Combine masks
     mask_yellow = cv2.inRange(hsv, lower_yellow, upper_yellow)
     mask_red1 = cv2.inRange(hsv, lower_red1, upper_red1)
     mask_red2 = cv2.inRange(hsv, lower_red2, upper_red2)
@@ -117,15 +129,21 @@ def crop_image(img):
     # Find contours
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    if contours:
-        # Find the largest contour
-        largest_contour = max(contours, key=cv2.contourArea)
-
-        # Get bounding box coordinates
-        x, y, w, h = cv2.boundingRect(largest_contour)
-
-        # Crop the image using the bounding box
-        img_cropped = img[y:y+h, x:x+w]
-        return img_cropped
-    else:
+    if not contours:
         return img
+    
+    # Find the largest contour
+    largest_contour = max(contours, key=cv2.contourArea)
+
+    # Get bounding box coordinates
+    x, y, w, h = cv2.boundingRect(largest_contour)
+
+    # Return original image if resulting crop is too small
+    if (w < (IMG_W * 0.2) or h < (IMG_H *0.2)):
+        return img
+
+    # Crop the image using the bounding box
+    img_cropped = img[y:y+h, x:x+w]
+
+    return img_cropped
+
