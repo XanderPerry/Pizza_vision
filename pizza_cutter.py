@@ -3,11 +3,59 @@ import time
 
 import cv2
 
-import whitebalance
-
 IMG_W = 640
 IMG_H = 480
 
+clahe_obj = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+
+def clahe(img):
+    # Convert the image from BGR to LAB color space
+    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+
+    # Split the LAB image into separate channels
+    lab_planes = list(cv2.split(lab))
+
+    # Apply CLAHE to the L channel
+    lab_planes[0] = clahe_obj.apply(lab_planes[0])
+
+    # Merge the channels back
+    lab = cv2.merge(tuple(lab_planes))
+
+    # Convert the LAB image back to BGR color space
+    img_clahe = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
+
+    return img_clahe
+
+def whitebalance(img):
+    # Convert the image from BGR to LAB color space
+    img_whitebalanced = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+
+    # Calculate the average values of the 'a' and 'b' channels
+    avg_a = np.average(img_whitebalanced[:, :, 1])
+    avg_b = np.average(img_whitebalanced[:, :, 2])
+
+    # Adjust the 'a' and 'b' channels to correct color cast
+    # The adjustment is proportional to the luminance channel (L)
+    luminance_scaled = img_whitebalanced[:, :, 0] / 255.0
+    img_whitebalanced[:, :, 1] = img_whitebalanced[:, :, 1] - ((avg_a - 128) * luminance_scaled * 1.1)
+    img_whitebalanced[:, :, 2] = img_whitebalanced[:, :, 2] - ((avg_b - 128) * luminance_scaled * 1.1)
+
+    # Clip the 'a' and 'b' channels to [0, 255] to avoid invalid values
+    img_whitebalanced[:, :, 1] = np.clip(img_whitebalanced[:, :, 1], 0, 255)
+    img_whitebalanced[:, :, 2] = np.clip(img_whitebalanced[:, :, 2], 0, 255)
+    img_whitebalanced = img_whitebalanced.astype(np.uint8)
+    
+    # Convert the image back to BGR color space
+    img_whitebalanced = cv2.cvtColor(img_whitebalanced, cv2.COLOR_LAB2BGR)
+
+    return img_whitebalanced
+
+def color_correct(img):
+    img_colorcorrected = clahe(img)
+
+    img_colorcorrected = whitebalance(img_colorcorrected)
+
+    return img_colorcorrected
 
 def calc_sobel(img_gray):
     # Apply Sobel operator
@@ -69,11 +117,7 @@ def hough_detect_circle(img_gray, img):
     return img
 
 def cutout_circle(img, edge_detection="sobel"):
-    # time_start = time.time()
-
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-    # time_gray = time.time()
 
     if edge_detection == "sobel":
         img_gray = calc_sobel(img_gray)
@@ -82,22 +126,12 @@ def cutout_circle(img, edge_detection="sobel"):
     elif edge_detection == "canny":
         img_gray = calc_canny(img_gray)
     
-    # time_edge = time.time()
-    
     img_circle = hough_detect_circle(img_gray, img)
-    
-    # time_end = time.time()
-    # print("Duration of gray conversion: " + str(time_gray - time_start))
-    # print("Duration of " + edge_detection + " edge detection: " + str(time_edge - time_gray))
-    # print("Duration of hough circles: " + str(time_end - time_edge))
-    # print("Total duration of circle cropping: " + str(time_end - time_start) + "\n")
 
     return img_circle
 
 def color_mask(img):
-    img_whitebalanced = whitebalance.white_balance_loops(img)
-
-    img_blurred = cv2.GaussianBlur(img_whitebalanced, (5, 5), 0)
+    img_blurred = cv2.GaussianBlur(img, (5, 5), 0)
     # cv2.imshow("Pizza blurred", img_blurred)
     hsv = cv2.cvtColor(img_blurred, cv2.COLOR_BGR2HSV)
     # cv2.imshow("Pizza hsv", hsv)
@@ -151,3 +185,11 @@ def crop_image(img):
 
     return img_cropped
 
+def cut_pizza(img):
+    img_cutout = color_correct(img)
+
+    img_cutout = crop_image(img_cutout)
+
+    img_cutout = cutout_circle(img_cutout)
+
+    return img_cutout

@@ -5,6 +5,8 @@ import numpy as np
 import random
 import os
 
+import pizza_cutter
+
 KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
 i = 0
 
@@ -12,8 +14,13 @@ i = 0
 directory = "data/" + KINDS[i] + "/train/"
 i=(i+1)%6
 filename = directory + random.choice(os.listdir(directory))
-image = cv2.imread(filename)
-hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+img = cv2.imread(filename)
+
+img_clahe = pizza_cutter.clahe(img)
+
+img_whitebalanced = pizza_cutter.whitebalance(img_clahe)
+
+hsv = cv2.cvtColor(img_whitebalanced, cv2.COLOR_BGR2HSV)
 
 def nothing(x):
     pass
@@ -84,11 +91,11 @@ while True:
     yellow_mask = cv2.inRange(hsv, y_lower, y_upper)
 
     # Create color overlays
-    red1_overlay = np.zeros_like(image)
+    red1_overlay = np.zeros_like(img)
     red1_overlay[:] = (0, 0, 255)  # Bright red in BGR
-    red2_overlay = np.zeros_like(image)
+    red2_overlay = np.zeros_like(img)
     red2_overlay[:] = (28, 153, 255)  # Bright orange in BGR    
-    yellow_overlay = np.zeros_like(image)
+    yellow_overlay = np.zeros_like(img)
     yellow_overlay[:] = (0, 255, 255)  # Bright yellow in BGR
 
     # Apply masks to overlays
@@ -97,7 +104,7 @@ while True:
     yellow_highlight = cv2.bitwise_and(yellow_overlay, yellow_overlay, mask=yellow_mask)
 
     # Combine overlays with original image
-    combined = image.copy()
+    combined = img_whitebalanced.copy()
     if red1_enabled: 
         combined = cv2.addWeighted(combined, 1.0, red1_highlight, 1, 0)
     if red2_enabled: 
@@ -106,7 +113,8 @@ while True:
         combined = cv2.addWeighted(combined, 1.0, yellow_highlight, 1, 0)
 
     # Show result
-    cv2.imshow('Original', image)
+    cv2.imshow('Original', img)
+    cv2.imshow('Whitebalanced', img_whitebalanced)
     cv2.imshow('Overlay Result', combined)
 
     key = cv2.waitKey(1)
@@ -115,8 +123,12 @@ while True:
         directory = "data/" + KINDS[i] + "/train/"
         i=(i+1)%6
         filename = directory + random.choice(os.listdir(directory))
-        image = cv2.imread(filename)
-        hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        img = cv2.imread(filename)
+        img_clahe = pizza_cutter.clahe(img)
+
+        img_whitebalanced = pizza_cutter.whitebalance(img_clahe)
+
+        hsv = cv2.cvtColor(img_whitebalanced, cv2.COLOR_BGR2HSV)
 
     elif key & 0xFF == ord('s'):
         print("Used mask parameters:")
