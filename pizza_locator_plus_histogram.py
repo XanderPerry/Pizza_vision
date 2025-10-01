@@ -63,9 +63,9 @@ def plot_color_histogram(img_cropped):
     plt.show()
 
 # Main loop
-i = 50
+i = 100
 for filename in glob.glob("data/sal/train/**/*.jpg", recursive=True):
-    if i < 50:
+    if i < 100:
         i += 1
         continue
     else:
@@ -74,7 +74,7 @@ for filename in glob.glob("data/sal/train/**/*.jpg", recursive=True):
     img = cv2.imread(filename)
 
     img_whitebalanced = whitebalance.white_balance_loops(img)
-    cv2.imshow("Pizza white balanced", img_whitebalanced)
+    # cv2.imshow("Pizza white balanced", img_whitebalanced)
 
     img_blurred = cv2.GaussianBlur(img_whitebalanced, (5, 5), 0)
     hsv = cv2.cvtColor(img_blurred, cv2.COLOR_BGR2HSV)
@@ -108,11 +108,11 @@ for filename in glob.glob("data/sal/train/**/*.jpg", recursive=True):
             last_cropped = img[y:y+h, x:x+w]
 
     # Show detection result
-    cv2.imshow("Pizza Detection", img)
+    # cv2.imshow("Pizza Detection", img)
 
     # If a valid cropped region was found, show it and plot histogram
     if last_cropped is not None:
-        cv2.imshow("Cropped Pizza", last_cropped)
+        # cv2.imshow("Cropped Pizza", last_cropped)
         plot_color_histogram(last_cropped)
 
     key = cv2.waitKey(0)

@@ -3,6 +3,8 @@ import time
 
 import cv2
 
+import whitebalance
+
 IMG_W = 640
 IMG_H = 480
 
@@ -93,7 +95,9 @@ def cutout_circle(img, edge_detection="sobel"):
     return img_circle
 
 def color_mask(img):
-    img_blurred = cv2.GaussianBlur(img, (5, 5), 0)
+    img_whitebalanced = whitebalance.white_balance_loops(img)
+
+    img_blurred = cv2.GaussianBlur(img_whitebalanced, (5, 5), 0)
     # cv2.imshow("Pizza blurred", img_blurred)
     hsv = cv2.cvtColor(img_blurred, cv2.COLOR_BGR2HSV)
     # cv2.imshow("Pizza hsv", hsv)
@@ -139,7 +143,7 @@ def crop_image(img):
     x, y, w, h = cv2.boundingRect(largest_contour)
 
     # Return original image if resulting crop is too small
-    if (w < (IMG_W * 0.2) or h < (IMG_H *0.2)):
+    if (w < (IMG_W*0.3) or h < (IMG_H*0.4)):
         return img
 
     # Crop the image using the bounding box
