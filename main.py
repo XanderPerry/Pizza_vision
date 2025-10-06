@@ -9,9 +9,9 @@ while True:
 
     cv2.imshow("original che", imgs["che"])
 
-    mean_hues = test_random.apply_function(get_values_x.get_mean_hue, imgs)
+    LBP = test_random.apply_function(get_values_x.get_LBP, imgs)
 
-    test_random.imgs_print_results(results_list=[mean_hues], labels_list=["mean hues"])
+    test_random.imgs_print_results(results_list=[LBP], labels_list=["get LBP"])
 
     key = cv2.waitKey(0)
     if key& 0xFF == 27:
