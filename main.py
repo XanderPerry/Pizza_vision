@@ -2,16 +2,17 @@ import cv2
 
 import pizza_cutter
 import test_random
-import whitebalance
+import get_values_x
 
 while True:
     imgs = test_random.get_random_images()
 
     cv2.imshow("original che", imgs["che"])
 
-    imgs_cutout = test_random.apply_function(pizza_cutter.cut_pizza, imgs)
+    mean_hues = test_random.apply_function(get_values_x.get_mean_hue, imgs)
+    print(mean_hues)
 
-    test_random.imgs_compare_visual(imgs_a=imgs, imgs_b=imgs_cutout)
+    test_random.imgs_print_results(results_list=[mean_hues], labels_list=["mean hues"])
 
     key = cv2.waitKey(0)
     if key& 0xFF == 27:

@@ -17,13 +17,21 @@ def get_random_images(n_images = 1):
 
     return imgs
 
-def apply_function(func, imgs):
+def modify_imgs(func, imgs):
     imgs_modified = {}
 
     for kind in KINDS:
         imgs_modified[kind] = func(imgs[kind])
 
     return imgs_modified
+
+def apply_function(func, imgs):
+    imgs_results = {}
+
+    for kind in KINDS:
+        imgs_results[kind] = func(imgs[kind])
+
+    return imgs_results
 
 def imgs_compare_visual(imgs_a, imgs_b, label_a = " before", label_b = " after"):
     plt.figure(figsize=(10, 20))
@@ -58,3 +66,12 @@ def imgs_compare_visual_list(imgs_list, labels_list):
     plt.tight_layout()
     plt.show()
     cv2.waitKey(0)
+
+def imgs_print_results(results_list, labels_list):
+    for kind in KINDS:
+        print(kind + ": ")
+        for i in range(len(results_list)):
+            print("\t" + labels_list[i] + " = " + str(results_list[i][kind]))
+
+    print()
+    return
