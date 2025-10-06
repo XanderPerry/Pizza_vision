@@ -16,3 +16,18 @@ def get_mean_hue(img, exclude_black=True):
 
     mean_hue = np.mean(hue_values)
     return mean_hue
+
+def get_mean_sat(img, exclude_black=True):
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    
+    if exclude_black:
+        mask = cv2.threshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 0, 255, cv2.THRESH_BINARY)[1]
+        sat_values = hsv[:,:,1][mask > 0]
+    else:
+        sat_values = hsv[:,:,1].ravel()
+    
+    if sat_values.size == 0:
+        return None  # No valid hue values found
+
+    mean_sat = np.mean(sat_values)
+    return mean_sat
