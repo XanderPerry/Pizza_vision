@@ -11,7 +11,7 @@ def get_random_images(n_images = 1):
     imgs = {}
 
     for kind in KINDS:
-        directory = "data/" + kind + "/train/"
+        directory = "data_cutout/" + kind + "/train/"
         filename = directory + random.choice(os.listdir(directory))
         imgs[kind] = cv2.imread(filename)
 
