@@ -11,6 +11,9 @@ def get_random_images(n_images = 1):
     imgs = {}
 
     for kind in KINDS:
+        # # Hayan's path #########################################################
+        # directory = "C:/HU/Jaar3/A/Beeldherkening/data_cutout/" + kind + "/train/"
+        # # Hayan's path #########################################################
         directory = "data_cutout/" + kind + "/train/"
         filename = directory + random.choice(os.listdir(directory))
         imgs[kind] = cv2.imread(filename)
