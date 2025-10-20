@@ -9,6 +9,7 @@ import os
 import cv2
 
 import get_values_x
+import get_values_h
 
 KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
 DIRECTORY = "pizza_dataframes/"
@@ -70,4 +71,4 @@ def add_values(func, label):
     return
 
 if __name__ == "__main__":    
-    add_values(get_values_x.get_edge_percentage, "edge percentage")
+    add_values(get_values_h.get_fourth_element_LBP, "fourth_LBP")
