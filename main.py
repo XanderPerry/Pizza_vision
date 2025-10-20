@@ -11,9 +11,9 @@ while True:
 
     cv2.imshow("original che", imgs["che"])
 
-    mean_val = test_random.apply_function(get_values_x.get_mean_val, imgs)
+    mean_val = test_random.apply_function(get_values_h.get_LBP, imgs)
 
-    test_random.imgs_print_results(results_list=[mean_val], labels_list=["mean val"])
+    # test_random.imgs_print_results(results_list=[mean_val], labels_list=["mean val"])
 
     key = cv2.waitKey(0)
     if key& 0xFF == 27:
