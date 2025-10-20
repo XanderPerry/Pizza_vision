@@ -68,22 +68,6 @@ def add_values(func, label):
     print(df_new.head())
     
     return
-    
 
-add_values(get_values_x.get_mean_val, "mean_val")
-
-# import seaborn as sns
-# import matplotlib.pyplot as plt
-# sns.set_theme(style="whitegrid")
-
-# f, ax = plt.subplots(figsize=(6.5, 6.5))
-# sns.despine(f, left=True, bottom=True)
-
-# pizza_df = pd.read_csv(DIRECTORY+"Pizza1.csv")
-
-# sns.scatterplot(x=pizza_df["mean_hue"], y=pizza_df["mean_sat"],
-#                 hue=pizza_df["kind"])
-
-# plt.xlabel("mean hue")
-# plt.ylabel("mean saturation")
-# plt.show()
+if __name__ == "__main__":    
+    add_values(get_values_x.get_edge_percentage, "edge percentage")

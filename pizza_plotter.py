@@ -3,107 +3,93 @@
 ##################################
 
 import numpy as np
+import seaborn as sns
 import matplotlib.pyplot as plt
+import pandas as pd
 import glob
 import cv2
 
+import add_to_dataframe
 
-def plot_hsv_histogram(img, exclude_black=True):
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    color = ('r', 'g', 'b')
-    plt.figure()
-    plt.title('HSV Color Histogram (Excluding Black)' if exclude_black else 'HSV Color Histogram')
-    plt.xlabel('Bins')
-    plt.ylabel('# of Pixels')
+sns.set_theme(style="whitegrid")
 
-    # Create mask to exclude black pixels
-    if exclude_black:
-        # Mask where all channels are > 0 (not pure black)
-        mask = cv2.threshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 0, 255, cv2.THRESH_BINARY)[1]
-    else:
-        mask = None
+def get_df():
+    opened = False
 
-    for i, col in enumerate(color):
-        hist = cv2.calcHist([hsv], [i], mask, [256], [0, 256])
-        plt.plot(hist, color=col)
-        plt.xlim([1, 256])
+    while not opened:
+        try:
+            filename = add_to_dataframe.DIRECTORY+input("What df would you like to use? ")
+            global pizza_df
+            pizza_df = pd.read_csv(filename, delimiter=',')
+        except:
+            print("File not found, try again.")
+            continue
+        opened = True
+
+    print("File opened")
+    print(pizza_df.head())
+
+def get_axes():
+    print("choose from: " + str(list(pizza_df)))
+    x = input("What value should the x axis show? ")
+    while not (x in list(pizza_df)):
+        print("Invalid x value, choose from: " + str(list(pizza_df)))
+        x = input("What value should the x axis show?")
+
+    y = input("What value should the y axis show? ")
+    while not (y in list(pizza_df)):
+        print("Invalid y value, choose from: " + str(list(pizza_df)))
+        y = input("What value should the x axis show? ")
+
+    return x, y
+
+def get_ax():
+    print("choose from: " + str(list(pizza_df)))
+    ax = input("What value should the plot show? ")
+    while not (ax in list(pizza_df)):
+        print("Invalid value, choose from: " + str(list(pizza_df)))
+        ax = input("What value should the plot show? ")
+
+def scatterplot():
+    x_column, y_column = get_axes()
+
+    f, ax = plt.subplots(figsize=(6.5, 6.5))
+    sns.scatterplot(x=pizza_df[x_column], y=pizza_df[y_column],
+                    hue=pizza_df["kind"])
+
+    plt.suptitle(x_column+" vs "+y_column)
+    plt.xlabel(x_column)
+    plt.ylabel(y_column)
+
+    sns.despine(f, left=True, bottom=True)
     plt.show()
 
-def get_mean_hue(img, exclude_black=True):
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+def violinplot():
+    x = get_ax()
     
-    if exclude_black:
-        mask = cv2.threshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 0, 255, cv2.THRESH_BINARY)[1]
-        hue_values = hsv[:,:,0][mask > 0]
-    else:
-        hue_values = hsv[:,:,0].flatten()
+    f, ax = plt.subplots(figsize=(6.5, 6.5))
     
-    if hue_values.size == 0:
-        return None  # No valid hue values found
+    sns.violinplot(x="mean_hue", y="kind", data=pizza_df["mean_hue"])
 
-    mean_hue = np.mean(hue_values)
-    return mean_hue
+    sns.despine(f, left=True, bottom=True)
+    plt.show()
 
-def get_hue_distribution(img, exclude_black=True):
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    
-    if exclude_black:
-        mask = cv2.threshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 0, 255, cv2.THRESH_BINARY)[1]
-        hue_values = hsv[:,:,0][mask > 0]
-    else:
-        hue_values = hsv[:,:,0].flatten()
+if __name__ == "__main__":
+    get_df()
 
-    hue_dist = np.bincount(hue_values//10, minlength=18)  # 18 bins for hue (0-179)
-    return hue_dist
-    
-    
+    new_plot = True
 
-def get_mean_sat(img, exclude_black=True):
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    
-    # Create mask to exclude black pixels
-    if exclude_black:
-        mask = cv2.threshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 0, 255, cv2.THRESH_BINARY)[1]
-        sat_values = hsv[:,:,1][mask > 0]
-    else:
-        sat_values = hsv[:,:,1].flatten()
-    
-    if sat_values.size == 0:
-        return None  # No valid saturation values found
+    while new_plot:
+        plotkind = input("What plot would you like? ").lower()
 
-    mean_sat = np.mean(sat_values)
-    return mean_sat
+        if plotkind == "scatter":
+            scatterplot()
+        if plotkind == "violin":
+            violinplot()
+        else:
+            print("Plotkind unknown...")
 
-def get_mean_val(img, exclude_black=True):
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    
-    # Create mask to exclude black pixels
-    if exclude_black:
-        mask = cv2.threshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 0, 255, cv2.THRESH_BINARY)[1]
-        val_values = hsv[:,:,2][mask > 0]
-    else:
-        val_values = hsv[:,:,2].flatten()
-
-    if val_values.size == 0:
-        return None  # No valid value values found
-    
-    mean_val = np.mean(val_values)
-    return mean_val
-
-def get_edge_percentage(img, ignore_black=True):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    
-    if ignore_black:
-        mask = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1]
-        gray = cv2.bitwise_and(gray, gray, mask=mask)
-    
-    edges = cv2.Canny(gray, 40, 100)
-    # cv2.imshow("Canny Edges", edges)
-    edge_pixels = np.sum(edges > 0)
-    total_pixels = np.sum(mask > 0) if ignore_black else img.shape[0] * img.shape[1]
-    
-    if total_pixels == 0:
-        return 0.0  # Avoid division by zero
-    
-    edge_percentage = (edge_pixels / total_pixels) * 100
-    return edge_percentage
+        if input("would you like another plot?(y/n) ").lower() in ["y", "yes"]:
+            new_plot = True
+        else:
+            new_plot = False
