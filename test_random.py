@@ -7,6 +7,43 @@ import cv2
 
 KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
 
+# Store the file lists and current indices globally
+file_lists = {}
+file_indices = {}
+def get_next_images():
+    # Initialize file lists and indices on first call
+    if not hasattr(get_next_images, "file_lists"):
+        get_next_images.file_lists = {}
+        get_next_images.file_indices = {}
+        for kind in KINDS:
+
+            # Hayan's path #########################################################
+            directory = "C:/HU/Jaar3/A/Beeldherkening/data_cutout/" + kind + "/train/"
+            # Hayan's path #########################################################
+            # directory = "data_cutout/" + kind + "/train/"
+
+            files = sorted(os.listdir(directory))  # sorted for fixed order
+            get_next_images.file_lists[kind] = files
+            get_next_images.file_indices[kind] = 0
+
+    imgs = {}
+    filenames = {}
+    for kind in KINDS:
+        files = get_next_images.file_lists[kind]
+        index = get_next_images.file_indices[kind]
+
+        filename = os.path.join(f"C:/HU/Jaar3/A/Beeldherkening/data_cutout/{kind}/train/", files[index])
+        img = cv2.imread(filename)
+
+        imgs[kind] = img
+        filenames[kind] = filename
+
+        # Move index to next file, wrap around at end
+        get_next_images.file_indices[kind] = (index + 1) % len(files)
+
+    return imgs
+
+
 def get_random_images(n_images = 1):
     imgs = {}
 
