@@ -47,3 +47,21 @@ def get_mean_val(img, exclude_black=True):
 
     mean_val = np.mean(val_values)
     return mean_val
+
+def get_edge_percentage(img, ignore_black=True):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    
+    if ignore_black:
+        mask = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1]
+        gray = cv2.bitwise_and(gray, gray, mask=mask)
+    
+    edges = cv2.Canny(gray, 50, 100)
+    cv2.imshow("Canny Edges", edges)
+    edge_pixels = np.sum(edges > 0)
+    total_pixels = np.sum(mask > 0) if ignore_black else img.shape[0] * img.shape[1]
+    
+    if total_pixels == 0:
+        return 0.0  # Avoid division by zero
+    
+    edge_percentage = (edge_pixels / total_pixels) * 100
+    return edge_percentage
