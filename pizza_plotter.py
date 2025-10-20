@@ -49,6 +49,7 @@ def get_ax():
     while not (ax in list(pizza_df)):
         print("Invalid value, choose from: " + str(list(pizza_df)))
         ax = input("What value should the plot show? ")
+    return ax
 
 def scatterplot():
     x_column, y_column = get_axes()
@@ -65,11 +66,11 @@ def scatterplot():
     plt.show()
 
 def violinplot():
-    x = get_ax()
+    y = get_ax()
     
     f, ax = plt.subplots(figsize=(6.5, 6.5))
     
-    sns.violinplot(x="mean_hue", y="kind", data=pizza_df["mean_hue"])
+    sns.violinplot(x="kind", y=y, hue="kind", data=pizza_df)
 
     sns.despine(f, left=True, bottom=True)
     plt.show()
