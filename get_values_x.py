@@ -33,6 +33,21 @@ def get_mean_sat(img, exclude_black=True):
     mean_sat = np.mean(sat_values)
     return mean_sat
 
+def get_mean_val(img, exclude_black=True):
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    
+    if exclude_black:
+        mask = cv2.threshold(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 0, 255, cv2.THRESH_BINARY)[1]
+        val_values = hsv[:,:,2][mask > 0]
+    else:
+        val_values = hsv[:,:,2].ravel()
+    
+    if val_values.size == 0:
+        return None  # No valid hue values found
+
+    mean_val = np.mean(val_values)
+    return mean_val
+
 def get_LBP(img):
     if img is None:
         print(f"Could not read image by get_LBP")
@@ -48,5 +63,12 @@ def get_LBP(img):
     # Compute histogram (to be able te return the usefull numbers)
     n_bins = int(LBP_data.max() + 1)
     hist, bins = np.histogram(LBP_data.ravel(), bins=n_bins, range=(0, n_bins))
+
+    print("LBP_data:")
+    print(LBP_data)
+    print("\nhist:")
+    print(hist)
+    print("\nbins:")
+    print(bins)
 
     return LBP_data, hist, bins

@@ -70,7 +70,7 @@ def add_values(func, label):
     return
     
 
-add_values(get_values_x.get_mean_sat, "mean_sat")
+add_values(get_values_x.get_mean_val, "mean_val")
 
 # import seaborn as sns
 # import matplotlib.pyplot as plt
