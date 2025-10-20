@@ -51,6 +51,21 @@ def get_fourth_element_LBP(img):
         
     return hist[3]  # 4th element (0-indexed)
 
+def get_eighth_element_LBP(img):
+    lbp_output = get_LBP(img)
+
+    if lbp_output is None:
+        print("LBP output is None")
+        return None
+        
+    _, hist, _ = lbp_output
+        
+    if len(hist) < 8:
+        print("Histogram has less than 4 bins")
+        return None
+        
+    return hist[7]  # 4th element (0-indexed)
+
 
 def plot_LBP_results(img, LBP_data, hist, bins):
     """Displays the original image, LBP result, and histogram with auto-naming."""
