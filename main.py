@@ -4,6 +4,7 @@ import pizza_cutter
 import test_random
 import get_values_x
 
+
 while True:
     imgs = test_random.get_random_images()
 
