@@ -71,4 +71,4 @@ def add_values(func, label):
     return
 
 if __name__ == "__main__":    
-    add_values(get_values_h.get_fourth_element_LBP, "get_eighth_element_LBP")
+    add_values(get_values_h.get_eighth_element_LBP, "eighth_LBP")
