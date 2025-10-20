@@ -11,8 +11,7 @@ while True:
 
     cv2.imshow("original che", imgs["che"])
 
-    get_LBP = test_random.apply_function(get_values_h.get_LBP, imgs)
-
+    get_LBP = test_random.apply_function(get_values_h.get_fourth_element_LBP, imgs)
     # test_random.imgs_print_results(results_list=[mean_val], labels_list=["mean val"])
 
     key = cv2.waitKey(0)
