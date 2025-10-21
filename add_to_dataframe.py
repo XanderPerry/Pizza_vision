@@ -13,6 +13,9 @@ import get_values_h
 
 KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
 DIRECTORY = "pizza_dataframes/"
+    # # Hayan's path #########################################################
+    # for filename in glob.glob("C:/HU/Jaar3/A/Beeldherkening/data_cutout/" + kind + "/train/**/*.jpg", recursive=True):
+    # # Hayan's path #########################################################
 
 def filename_to_id(filename):
     return filename[filename.find("/")+1:filename.find("/")+4] + filename[-8: -4]
@@ -71,4 +74,4 @@ def add_values(func, label):
     return
 
 if __name__ == "__main__":    
-    add_values(get_values_h.get_eighth_element_LBP, "eighth_LBP")
+    add_values(get_values_h.get_red_percentages, "Red percentage")
