@@ -10,6 +10,71 @@ _summary_data = []  # store (name, mean, variance) for scatter plot
 
 
 
+def get_red_percentages(img):
+    if img is None:
+        return None
+    # Define the range for red color in HSV
+    lower_red1 = np.array([0, 50, 50])
+    upper_red1 = np.array([10, 255, 255])
+    lower_red2 = np.array([170, 70, 50])
+    upper_red2 = np.array([180, 255, 255])
+    
+
+    # Convert from BGR to HSV color space
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    exclude_black_pixels = hsv[:, :, 2] > 20  # exclude very dark/black pixels
+
+    # Create masks for the red regions
+    mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
+    mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
+    mask = mask1 + mask2
+    
+    # Calculate the percentage of red pixels
+    red_pixels = np.count_nonzero(mask[exclude_black_pixels])
+    total_pixels = np.count_nonzero(exclude_black_pixels)
+    red_percentage = ((red_pixels / total_pixels) * 100)
+    print (red_percentage)
+    return red_percentage
+
+def get_green_percentages(img):
+
+    if img is None:
+        return None
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    # Green hue roughly between 35° and 85°
+    # (extend to include dark greens, based on what our data set has)
+    lower_green = np.array([35, 30, 30])
+    upper_green = np.array([90, 255, 255])
+    
+    exclude_black_pixels = hsv[:, :, 2] > 20  # exclude very dark/black pixels
+
+    mask = cv2.inRange(hsv, lower_green, upper_green)
+    green_pixels = np.count_nonzero(mask[exclude_black_pixels])
+    total_pixels = np.count_nonzero(exclude_black_pixels)
+    green_percentage = (green_pixels / total_pixels) * 100
+    return green_percentage
+
+def get_yellow_percentages(img):
+    if img is None:
+        return None
+    yellow_percentage = 0
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    # Yellow (lower saturation threshold to include pale yellows, as the yellow coloration in our data set is alomst white)
+    lower_yellow = np.array([15, 20, 120])
+    upper_yellow = np.array([40, 255, 255])
+    
+    exclude_black_pixels = hsv[:, :, 2] > 20  # exclude very dark/black pixels
+
+    mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+    yellow_pixels = np.count_nonzero(mask[exclude_black_pixels])
+    total_pixels = np.count_nonzero(exclude_black_pixels)
+    yellow_percentage = (int)((yellow_pixels / total_pixels) * 100)
+
+    return yellow_percentage
+
+
 def get_LBP(img):
     if img is None:
         print(f"Could not read image by get_LBP")
