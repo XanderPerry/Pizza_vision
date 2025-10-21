@@ -11,8 +11,15 @@ while True:
 
     cv2.imshow("original che", imgs["che"])
 
-    get_LBP = test_random.apply_function(get_values_h.get_fourth_element_LBP, imgs)
-    # test_random.imgs_print_results(results_list=[mean_val], labels_list=["mean val"])
+    # get_LBP = test_random.apply_function(get_values_h.get_fourth_element_LBP, imgs)
+
+    # test color percentages extraction:
+    get_red = test_random.apply_function(get_values_h.get_red_percentages, imgs)
+    # get_green = test_random.apply_function(get_values_h.get_green_percentages, imgs)
+    # get_yellow = test_random.apply_function(get_values_h.get_yellow_percentages, imgs)
+
+
+    test_random.imgs_print_results(results_list=[get_red], labels_list=["get_red"])
 
     key = cv2.waitKey(0)
     if key& 0xFF == 27:
