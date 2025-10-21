@@ -18,7 +18,15 @@ DIRECTORY = "pizza_dataframes/"
     # # Hayan's path #########################################################
 
 def filename_to_id(filename):
-    return filename[filename.find("/")+1:filename.find("/")+4] + filename[-8: -4]
+    UserBased_ID = filename[filename.find("/")+1:filename.find("/")+4] + filename[-8: -4] # for Xander
+
+    # # Hayan's path ########################################################## for Hayan
+    # kind_start = filename.find('data_cutout/') + len('data_cutout/')
+    # prefix = filename[kind_start : filename.find('/', kind_start)]
+    # UserBased_ID = prefix[:3] + filename[-8:-4]
+    # # Hayan's path #########################################################
+
+    return UserBased_ID
 
 def create_initial():
     pizza_df = pd.DataFrame(columns=["ID", "kind"])
@@ -27,6 +35,7 @@ def create_initial():
         print(f"Processing {kind} pizzas...")
 
         for filename in glob.glob("data_cutout/" + kind + "/train/**/*.jpg", recursive=True):
+        # for filename in glob.glob("C:/HU/Jaar3/A/Beeldherkening/data_cutout/" + kind + "/train/**/*.jpg", recursive=True):
             pizza_df.loc[len(pizza_df)] = [
                 filename_to_id(filename),
                 kind
@@ -56,6 +65,7 @@ def add_values(func, label):
     df_to_add = pd.DataFrame(columns=["ID", label])
     for kind in KINDS:
         for filename in glob.glob("data_cutout/" + kind + "/train/**/*.jpg", recursive=True):
+        # for filename in glob.glob("C:/HU/Jaar3/A/Beeldherkening/data_cutout/" + kind + "/train/**/*.jpg", recursive=True):
             img = cv2.imread(filename)
             print(f"Processing: {filename}")
             id = filename_to_id(filename)
@@ -74,4 +84,4 @@ def add_values(func, label):
     return
 
 if __name__ == "__main__":    
-    add_values(get_values_h.get_red_percentages, "Red percentage")
+    add_values(get_values_h.get_green_percentages, "Green percentage")
