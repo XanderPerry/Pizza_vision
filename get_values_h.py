@@ -32,7 +32,9 @@ def get_LBP(img):
     # print(hist)
     # print("\nbins:")
     # print(bins)
-    # plot_LBP_results(img, LBP_data, hist, bins)
+
+    # plot_LBP_results(img, LBP_data, hist, bins) ######## for visual testing
+
     return LBP_data, hist, bins
     # 
 
@@ -64,7 +66,7 @@ def get_eighth_element_LBP(img):
         print("Histogram has less than 4 bins")
         return None
         
-    return hist[7]  # 4th element (0-indexed)
+    return hist[7]  # 8th element (0-indexed)
 
 
 def plot_LBP_results(img, LBP_data, hist, bins):
