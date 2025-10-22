@@ -1,12 +1,14 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.model_selection import cross_val_score
 import cv2
 import glob
 
@@ -84,23 +86,44 @@ def test_model_rf():
 
     return label_true, label_predicted
 
-def train_knn(n, df_local_path):
+def train_knn(df_local_path):
     pizza_df = pd.read_csv(df_local_path)
 
-    x = pizza_df.iloc[:, 2:].values
+    X = pizza_df.iloc[:, 2:].values
     y = pizza_df["kind"].values
 
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+    # x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 
-    scaler = StandardScaler()
-    x_train = scaler.fit_transform(x_train)
-    x_test = scaler.transform(x_test)
-    knn = KNeighborsClassifier(n_neighbors=n)
-    knn.fit(x_train, y_train)
+    # scaler = StandardScaler()
+    # x_train = scaler.fit_transform(x_train)
+    # x_test = scaler.transform(x_test)
+    
+    highest_accuracy = 0
+    best_n = 1
+    scores = []
 
-    y_pred = knn.predict(x_test)
-    accuracy = accuracy_score(y_test, y_pred)
-    print("Accuracy: " + str(accuracy))
+    print("test")
+    for i in range(1, 31):
+        knn = KNeighborsClassifier(n_neighbors=i)
+        score = cross_val_score(knn, X, y, cv=5)
+        scores.append(np.mean(score))
+
+        # knn.fit(x_train, y_train)
+
+        # y_pred = knn.predict(x_test)
+        # accuracy = accuracy_score(y_test, y_pred)
+
+        # if accuracy >= highest_accuracy:
+        #     accuracy = highest_accuracy
+        #     best_n = i
+
+        # knn = KNeighborsClassifier(n_neighbors=best_n)
+        # knn.fit(x_train, y_train)
+
+    sns.lineplot(x = range(1,31), y = scores, marker = 'o')
+    plt.xlabel("K Values")
+    plt.ylabel("Accuracy Score")
+    plt.show()
 
     return knn
 
@@ -140,62 +163,7 @@ if __name__ == "__main__":
     label_true, label_predicted = test_model_rf()
     plot_cm(label_true=label_true, label_predicted=label_predicted, labels=KINDS, title="Confusion matrix - RF")
 
-    knn = train_knn(1, Xanders_Path)
+    knn = train_knn(Xanders_Path)
     label_true, label_predicted = test_model_knn()
     plot_cm(label_true=label_true, label_predicted=label_predicted, labels=KINDS, title="Confusion matrix - knn")
     
-
-
-
-
-
-
-
-    
-
-
-
-# def Train_RF_with_DF(DF_local_Path, img_path=None):
-#     df = pd.read_csv(DF_local_Path)
-
-#     Y = df['kind']
-#     X = df.drop(['ID', 'kind'], axis=1)
-
-#     X = X.astype(float)
-
-#     le = LabelEncoder()
-#     Y_encoded = le.fit_transform(Y)
-#     class_names = le.classes_
-
-#     X_train, X_test, Y_train, Y_test = train_test_split(
-#         X, Y_encoded, test_size=0.2, random_state=42, stratify=Y_encoded
-#     )
-
-#     rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
-
-#     rf_model.fit(X_train, Y_train)
-#     print("Training complete.")
-
-#     Y_pred = rf_model.predict(X_test)
-
-#     accuracy = accuracy_score(Y_test, Y_pred)
-#     print(f"Accuracy on Test Data: {accuracy:.2f}")
-
-#     report = classification_report(
-#         Y_test, Y_pred,
-#         target_names=class_names,
-#         zero_division=0 
-#     )
-#     # print("\nClassification Report:\n", report)
-
-# new_sample = process_img(cv2.imread(img_path))
-   
-#     new_prediction_encoded = rf_model.predict(new_sample)
-
-#     predicted_kind = le.inverse_transform(new_prediction_encoded)[0]
-
-#     print("\n--- 6. Final Decision for a New Image ---")
-#     print(f"New Image Features:\n{new_sample.iloc[0].to_dict()}")
-#     print(f"\nPredicted Kind (Decision): {predicted_kind}")
-
-#     return
