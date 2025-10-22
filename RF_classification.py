@@ -14,7 +14,7 @@
 
 #####################################################
 ## Part 3
-## Takes the values from Part2 and trys and classify the images into their sorts using one or more of our descision engine.
+## Takes the values from Part2 and tries and classify the images into their sorts using one or more of our descision engine.
 #####################################################
 
 #####################################################
@@ -32,12 +32,17 @@ from sklearn.metrics import classification_report, accuracy_score
 from io import StringIO
 import msvcrt
 import time
+import cv2
 
-Hayans_Path = "C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza10.csv"
+import get_values_x
+import get_values_h
+
+Hayans_Path = "C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza12.csv"
+Xanders_Path = "pizza_dataframes\Pizza12.csv"
 
 ##################################################### Part 1: begin
 
-def Train_RF_with_DF(DF_local_Path):
+def Train_RF_with_DF(DF_local_Path, img_path=None):
     
 # --- 1. DATA SIMULATION (Using your CSV structure) ---
 #C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza10.csv
@@ -110,14 +115,18 @@ def Train_RF_with_DF(DF_local_Path):
 
     # --- 6. MAKING A NEW PREDICTION (The final decision) ---
 
-    # Define new, unseen features (e.g., from a new image)
-    # This new sample looks like a 'che' (low hue, high sat, high LBP)
-    new_sample = pd.DataFrame([{ # che72
-        'mean_hue': 17.44428853232465, 'mean_sat': 115.95940861855082, 'mean_val': 1141.27171415207533, 
-        'edge_percent': 16.42568075976654, 'fourth_LBP': 8252, 'eighth_LBP': 1538, 
-        'Red percentage': 7.410500171291538, 'Yellow percentage': 46.22302158273381, 
-        'Green percentage': 0.1006337786913326, 'circles_s': 3.0, 'circles_m': 1.0
-    }])
+    if(img_path):
+        new_sample = process_img(cv2.imread("data_cutout/che/test/che_0_A_00_Y_0000.jpg"))
+    else:
+        # # Define new, unseen features (e.g., from a new image)
+        # # This new sample looks like a 'che' (low hue, high sat, high LBP)
+        # new_sample = pd.DataFrame([{ # che72
+        #     'mean_hue': 17.44428853232465, 'mean_sat': 115.95940861855082, 'mean_val': 1141.27171415207533, 
+        #     'edge_percent': 16.42568075976654, 'fourth_LBP': 8252, 'eighth_LBP': 1538, 
+        #     'Red percentage': 7.410500171291538, 'Yellow percentage': 46.22302158273381, 
+        #     'Green percentage': 0.1006337786913326, 'circles_s': 3.0, 'circles_m': 1.0
+        # }])
+        return
 
     # Use the model to predict the class
     new_prediction_encoded = rf_model.predict(new_sample)
@@ -136,6 +145,24 @@ def Train_RF_with_DF(DF_local_Path):
 
 
 ##################################################### Part 2: begin
+
+def process_img(img):
+    df = pd.DataFrame([{
+        "mean_hue" :            get_values_x.get_mean_hue(img), 
+        "mean_sat" :            get_values_x.get_mean_sat(img), 
+        "mean_val" :            get_values_x.get_mean_val(img), 
+        "edge_percent" :        get_values_x.get_edge_percentage(img), 
+        "fourth_LBP" :          get_values_h.get_fourth_element_LBP(img), 
+        "eighth_LBP" :          get_values_h.get_eighth_element_LBP(img), 
+        "Red percentage" :      get_values_h.get_red_percentages(img), 
+        "Yellow percentage" :   get_values_h.get_yellow_percentages(img), 
+        "Green percentage" :    get_values_h.get_green_percentages(img), 
+        "circles_s" :           get_values_x.get_small_circles(img), 
+        "circles_m" :           get_values_x.get_med_circles(img)
+    }])
+
+    return df
+
 
 def main_loop():
     
@@ -161,7 +188,7 @@ def main_loop():
 
 ###################################################### MAIN
 def main():
-    Train_RF_with_DF(Hayans_Path)
+    Train_RF_with_DF(Xanders_Path, "data_cutout/haw/test/haw_0_A_00_Y_0000.jpg")
     print("Press ESC to stop the program.")
 
     while True:
@@ -174,4 +201,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # Y = process_img(cv2.imread("data_cutout/che/test/che_0_A_00_Y_0000.jpg"))
+    
+
 ######################################################

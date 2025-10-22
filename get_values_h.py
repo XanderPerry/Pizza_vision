@@ -70,7 +70,7 @@ def get_yellow_percentages(img):
     mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
     yellow_pixels = np.count_nonzero(mask[exclude_black_pixels])
     total_pixels = np.count_nonzero(exclude_black_pixels)
-    yellow_percentage = (int)((yellow_pixels / total_pixels) * 100)
+    yellow_percentage = ((yellow_pixels / total_pixels) * 100)
 
     return yellow_percentage
 
