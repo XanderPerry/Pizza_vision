@@ -44,7 +44,7 @@ def get_next_images():
     return imgs
 
 
-def get_random_images(n_images = 1):
+def get_random_images(n_images = 1, show_names=True):
     imgs = {}
 
     for kind in KINDS:
@@ -55,6 +55,11 @@ def get_random_images(n_images = 1):
         filename = directory + random.choice(os.listdir(directory))
         imgs[kind] = cv2.imread(filename)
 
+        if show_names:
+            print(kind + ": " + filename)
+            if kind == KINDS[-1]:
+                print()
+    
     return imgs
 
 def modify_imgs(func, imgs):
@@ -69,7 +74,8 @@ def apply_function(func, imgs):
     imgs_results = {}
 
     for kind in KINDS:
-        imgs_results[kind] = func(imgs[kind])
+        result = func(imgs[kind])
+        imgs_results[kind] = result
 
     return imgs_results
 

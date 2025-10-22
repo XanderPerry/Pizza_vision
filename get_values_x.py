@@ -67,3 +67,109 @@ def get_edge_percentage(img, ignore_black=True):
     
     edge_percentage = (edge_pixels / total_pixels) * 100
     return edge_percentage
+
+def get_pizza_radius(img, testing=False):
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img_blur = cv2.blur(img_gray, (5, 5))
+
+    # Detect circles
+    circles = cv2.HoughCircles(
+        img_blur,
+        cv2.HOUGH_GRADIENT,
+        dp=1,
+        minDist=200,
+        param1=100,
+        param2=20,
+        minRadius=100,
+        maxRadius=300
+    )
+
+    if circles is not None:
+        circles = np.uint16(np.around(circles))
+        x, y, r = circles[0][0]
+    
+        if testing:
+            output = img.copy()
+            
+            cv2.circle(output, (x, y), r, (0, 255, 0), 2)  # Circle outline
+            cv2.circle(output, (x, y), 2, (0, 0, 255), 3)  # Center point
+
+            cv2.imshow("output", output)
+            cv2.waitKey(0)
+
+        return r
+    else:
+        h, w = img.shape[:2]
+        return int((h+w)/2)
+
+def get_small_circles(img, testing=False):
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img_gray = cv2.blur(img_gray, (5, 5))
+
+    r_pizza = get_pizza_radius(img)
+
+    circles = cv2.HoughCircles(
+        img_gray,
+        cv2.HOUGH_GRADIENT,
+        dp=1,
+        minDist=int(r_pizza/8),
+        param1=60,
+        param2=23,
+        minRadius=int(r_pizza/12),
+        maxRadius=int(r_pizza/6)
+    )
+
+    if circles is not None:
+        circles = np.uint16(np.around(circles))
+        if testing:
+            output = img.copy()
+            for i in circles[0,:]:
+                x = i[0]
+                y = i[1]
+                r = i[2]
+                
+                cv2.circle(output, (x, y), r, (0, 255, 0), 2)  # Circle outline
+                cv2.circle(output, (x, y), 2, (0, 0, 255), 3)  # Center point
+
+            cv2.imshow("output", output)
+            cv2.waitKey(0)
+        
+        return len(circles[0,:])
+    else:
+        return 0
+    
+def get_med_circles(img, testing=False):
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img_gray = cv2.blur(img_gray, (5, 5))
+
+    r_pizza = get_pizza_radius(img)
+
+    circles = cv2.HoughCircles(
+        img_gray,
+        cv2.HOUGH_GRADIENT,
+        dp=1,
+        minDist=int(r_pizza/4),
+        param1=100,
+        param2=25,
+        minRadius=int(r_pizza/6),
+        maxRadius=int(r_pizza/3)
+    )
+
+    if circles is not None:
+        circles = np.uint16(np.around(circles))
+        if testing:
+            output = img.copy()
+            for i in circles[0,:]:
+                x = i[0]
+                y = i[1]
+                r = i[2]
+                
+                cv2.circle(output, (x, y), r, (0, 255, 0), 2)  # Circle outline
+                cv2.circle(output, (x, y), 2, (0, 0, 255), 3)  # Center point
+
+            cv2.imshow("output", output)
+            cv2.waitKey(0)
+        
+        return len(circles[0,:])
+    else:
+        return 0

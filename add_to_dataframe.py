@@ -84,4 +84,4 @@ def add_values(func, label):
     return
 
 if __name__ == "__main__":    
-    add_values(get_values_h.get_green_percentages, "Green percentage")
+    add_values(get_values_x.get_med_circles, "circles_m")
