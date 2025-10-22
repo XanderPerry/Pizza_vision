@@ -27,7 +27,7 @@ from sklearn.metrics import classification_report, accuracy_score
 
 
 from io import StringIO
-df = pd.read_csv("C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza10.csv")
+df = pd.read_csv("C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza12.csv")
 
 print("--- 1. Data Loaded from CSV (Pandas DataFrame) ---")
 print(df.head())
