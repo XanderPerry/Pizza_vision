@@ -33,7 +33,7 @@ def get_red_percentages(img):
     red_pixels = np.count_nonzero(mask[exclude_black_pixels])
     total_pixels = np.count_nonzero(exclude_black_pixels)
     red_percentage = ((red_pixels / total_pixels) * 100)
-    print (red_percentage)
+    # print (red_percentage)
     return red_percentage
 
 def get_green_percentages(img):

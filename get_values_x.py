@@ -57,8 +57,6 @@ def get_edge_percentage(img, ignore_black=True):
         mask = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1]
         edges = cv2.bitwise_and(edges, edges, mask=mask)
     
-    
-    cv2.imshow("Canny Edges", edges)
     edge_pixels = np.sum(edges > 0)
     total_pixels = np.sum(mask > 0) if ignore_black else img.shape[0] * img.shape[1]
     
