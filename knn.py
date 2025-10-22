@@ -15,18 +15,14 @@ y = pizza_df["kind"].values
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 
-print("Unscaled:")
-print(x_train.head())
 scaler = StandardScaler()
-X_train = scaler.fit_transform(x_train)
-X_test = scaler.transform(x_test)
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
 
-print("Scaled:")
-print(x_train.head())
+for i in range(1, 200, 10):
+    knn = KNeighborsClassifier(n_neighbors=i)
+    knn.fit(x_train, y_train)
 
-knn = KNeighborsClassifier(n_neighbors=3)
-knn.fit(x_train, y_train)
-
-y_pred = knn.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred)
-print("Accuracy:", accuracy)
+    y_pred = knn.predict(x_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    print("Accuracy " + str(i) + ": ", accuracy)
