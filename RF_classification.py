@@ -115,7 +115,14 @@ def Train_RF_with_DF(DF_local_Path, img_path=None):
     if(img_path):
         new_sample = process_img(cv2.imread(img_path))
     else:
-        return
+        # Define new, unseen features (e.g., from a new image)
+        # This new sample looks like a 'che' (low hue, high sat, high LBP)
+        new_sample = pd.DataFrame([{ # che72
+            'mean_hue': 17.44428853232465, 'mean_sat': 115.95940861855082, 'mean_val': 1141.27171415207533, 
+            'edge_percent': 16.42568075976654, 'fourth_LBP': 8252, 'eighth_LBP': 1538, 
+            'Red percentage': 7.410500171291538, 'Yellow percentage': 46.22302158273381, 
+            'Green percentage': 0.1006337786913326, 'circles_s': 3.0, 'circles_m': 1.0
+        }])
 
     # Use the model to predict the class
     new_prediction_encoded = rf_model.predict(new_sample)
@@ -147,8 +154,7 @@ def process_img(img):
     return df
 
 def main():
-    # C:/HU/Jaar3/A/Beeldherkening/data_cutout/" + kind + "/train/
-    Train_RF_with_DF(Hayans_Path, "C:/HU/Jaar3/A/Beeldherkening/data_cutout/moz/test/moz_0_A_00_Y_0000.jpg")
+    Train_RF_with_DF(Xanders_Path, "data_cutout/fun/test/fun_0_A_00_Y_0000.jpg")
     print("Press ESC to stop the program.")
 
     while True:
