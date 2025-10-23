@@ -44,14 +44,14 @@ def get_next_images():
     return imgs
 
 
-def get_random_images(n_images = 1, show_names=True):
+def get_random_images(show_names=True, dataset="data_cutout", datagroup="train"):
     imgs = {}
 
     for kind in KINDS:
         # # Hayan's path #########################################################
         # directory = "C:/HU/Jaar3/A/Beeldherkening/data_cutout/" + kind + "/train/"
         # # Hayan's path #########################################################
-        directory = "data_cutout/" + kind + "/train/"
+        directory = dataset + "/" + kind + "/" + datagroup + "/"
         filename = directory + random.choice(os.listdir(directory))
         imgs[kind] = cv2.imread(filename)
 

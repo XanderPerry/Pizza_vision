@@ -13,10 +13,12 @@ import cv2
 import glob
 
 import pizza_cutter
+import test_random
 import get_values_x
 import get_values_h
 
 KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
+MODES = ["random", "test", "validation"]
 
 Hayans_Path = "C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza12.csv"
 Xanders_Path = "pizza_dataframes\Pizza12.csv"
@@ -63,8 +65,7 @@ def train_rf(df_local_path):
 
     return rf_model, le
 
-def rf_predict(img_path, is_cutout=False):
-    img = cv2.imread(img_path)
+def rf_predict(img, is_cutout=False):
 
     if not is_cutout:
         img = pizza_cutter.cut_pizza(img)
@@ -77,15 +78,21 @@ def rf_predict(img_path, is_cutout=False):
 
     return predicted_kind
 
-def test_model_rf():
+def test_model_rf(dataset="data", datagroup="validation"):
     label_true = []
     label_predicted = []
+
+    if dataset == "data":
+        is_cutout = False
+    else:
+        is_cutout = True
     
     for kind in KINDS:
-        for filename in glob.glob("data/" + kind + "/test/**/*.jpg", recursive=True):
+        for filename in glob.glob(dataset + "/" + kind + "/" + datagroup + "/**/*.jpg", recursive=True):
             print(filename)
             label_true.append(kind)
-            label_predicted.append(rf_predict(filename, is_cutout=False))                
+            img = cv2.imread(filename)
+            label_predicted.append(rf_predict(img, is_cutout=is_cutout))                
         
     accuracy = accuracy_score(label_true, label_predicted)
     print("Accuracy: "+str(accuracy))
@@ -164,10 +171,70 @@ def plot_cm(label_true, label_predicted, labels=None, title="Confusion matrix"):
     plt.title(title)
     plt.show()
 
+def random_func():
+     while True:
+        print("Press esc to exit, press another key for new images.")
+
+        imgs = test_random.get_random_images(dataset="data", datagroup="validation")
+        predictions = test_random.apply_function(rf_predict, imgs)
+        
+        test_random.imgs_print_results(results_list=[predictions], labels_list=["Predictions"])
+
+        imgs_res = {}
+        for kind in KINDS:
+            imgs_res[kind] = cv2.resize(imgs[kind], (0, 0), fx=0.7, fy=0.7, interpolation=cv2.INTER_AREA)
+
+            if kind == predictions[kind]:
+                result = "Correct :)"
+                color = (0, 255, 0)
+            else:
+                result = "Incorrect :("
+                color = (0, 100, 255)
+
+            text = "True: " + kind + " | Predicted: " + predictions[kind] + " | " + result
+            imgs_res[kind] = cv2.putText(imgs_res[kind], text, (10, 10), cv2.FONT_HERSHEY_COMPLEX_SMALL,
+                                            0.8, color, 1, cv2.LINE_AA)
+
+        top_img = np.concatenate((imgs_res["che"], imgs_res["fun"], imgs_res["haw"]), axis = 1)
+        bot_img = np.concatenate((imgs_res["mar"], imgs_res["moz"], imgs_res["sal"]), axis = 1)
+        res_img = np.concatenate((top_img, bot_img), axis=0)
+
+        cv2.imshow("Results", res_img)
+
+        key = cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        if key& 0xFF == 27:
+            print("Exiting...")
+            break
+        else:
+            cv2.destroyAllWindows()
+            print("New images.")
+
 if __name__ == "__main__": 
     rf_model, le = train_rf(Xanders_Path)
-    label_true, label_predicted = test_model_rf()
-    plot_cm(label_true=label_true, label_predicted=label_predicted, labels=KINDS, title="Confusion matrix - RF")
+
+    print("Welcome to the PizzaVision demo program, please choose one of the following modes: "+str(MODES))
+
+    while True:
+        mode = input("What mode do you want to run in? ").lower()
+        while not mode in MODES:
+            mode = input("This mode is unsupported, please try again: ")
+
+        if mode == "random":
+           random_func()
+
+        elif mode == "test":
+            label_true, label_predicted = test_model_rf(dataset="data", datagroup="test")
+            plot_cm(label_true=label_true, label_predicted=label_predicted, labels=KINDS, title="Confusion matrix - RF")
+
+        elif mode == "validation":
+            label_true, label_predicted = test_model_rf(dataset="data", datagroup="validation")
+            plot_cm(label_true=label_true, label_predicted=label_predicted, labels=KINDS, title="Confusion matrix - RF")
+
+        if input("would you like another test?(y/n) ").lower() in ["y", "yes"]:
+            continue
+        else:
+            break
 
     # knn = train_knn(Xanders_Path)
     # label_true, label_predicted = test_model_knn()
