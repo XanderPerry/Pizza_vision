@@ -12,6 +12,7 @@ from sklearn.model_selection import cross_val_score
 import cv2
 import glob
 
+import pizza_cutter
 import get_values_x
 import get_values_h
 
@@ -62,8 +63,13 @@ def train_rf(df_local_path):
 
     return rf_model, le
 
-def rf_predict(img_path):
-    new_sample = process_img(cv2.imread(img_path))
+def rf_predict(img_path, is_cutout=False):
+    img = cv2.imread(img_path)
+
+    if not is_cutout:
+        img = pizza_cutter.cut_pizza(img)
+
+    new_sample = process_img(img)
    
     new_prediction_encoded = rf_model.predict(new_sample)
 
@@ -76,66 +82,66 @@ def test_model_rf():
     label_predicted = []
     
     for kind in KINDS:
-        for filename in glob.glob("data_cutout/" + kind + "/test/**/*.jpg", recursive=True):
+        for filename in glob.glob("data/" + kind + "/test/**/*.jpg", recursive=True):
             print(filename)
             label_true.append(kind)
-            label_predicted.append(rf_predict(filename))                
+            label_predicted.append(rf_predict(filename, is_cutout=False))                
         
     accuracy = accuracy_score(label_true, label_predicted)
     print("Accuracy: "+str(accuracy))
 
     return label_true, label_predicted
 
-def train_knn(df_local_path):
-    pizza_df = pd.read_csv(df_local_path)
+# def train_knn(df_local_path):
+#     pizza_df = pd.read_csv(df_local_path)
 
-    X = pizza_df.iloc[:, 2:].values
-    y = pizza_df["kind"].values
+#     X = pizza_df.iloc[:, 2:].values
+#     y = pizza_df["kind"].values
 
-    # x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+#     # x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 
-    # scaler = StandardScaler()
-    # x_train = scaler.fit_transform(x_train)
-    # x_test = scaler.transform(x_test)
+#     # scaler = StandardScaler()
+#     # x_train = scaler.fit_transform(x_train)
+#     # x_test = scaler.transform(x_test)
     
-    highest_accuracy = 0
-    best_n = 1
-    scores = []
+#     highest_accuracy = 0
+#     best_n = 1
+#     scores = []
 
-    print("test")
-    for i in range(1, 31):
-        knn = KNeighborsClassifier(n_neighbors=i)
-        score = cross_val_score(knn, X, y, cv=5)
-        scores.append(np.mean(score))
+#     print("test")
+#     for i in range(1, 31):
+#         knn = KNeighborsClassifier(n_neighbors=i)
+#         score = cross_val_score(knn, X, y, cv=5)
+#         scores.append(np.mean(score))
 
-        # knn.fit(x_train, y_train)
+#         # knn.fit(x_train, y_train)
 
-        # y_pred = knn.predict(x_test)
-        # accuracy = accuracy_score(y_test, y_pred)
+#         # y_pred = knn.predict(x_test)
+#         # accuracy = accuracy_score(y_test, y_pred)
 
-        # if accuracy >= highest_accuracy:
-        #     accuracy = highest_accuracy
-        #     best_n = i
+#         # if accuracy >= highest_accuracy:
+#         #     accuracy = highest_accuracy
+#         #     best_n = i
 
-        # knn = KNeighborsClassifier(n_neighbors=best_n)
-        # knn.fit(x_train, y_train)
+#         # knn = KNeighborsClassifier(n_neighbors=best_n)
+#         # knn.fit(x_train, y_train)
 
-    sns.lineplot(x = range(1,31), y = scores, marker = 'o')
-    plt.xlabel("K Values")
-    plt.ylabel("Accuracy Score")
-    plt.show()
+#     sns.lineplot(x = range(1,31), y = scores, marker = 'o')
+#     plt.xlabel("K Values")
+#     plt.ylabel("Accuracy Score")
+#     plt.show()
 
-    return knn
+#     return knn
 
-def knn_predict(img_path):
-    new_sample = process_img(cv2.imread(img_path))
+# def knn_predict(img_path):
+#     new_sample = process_img(cv2.imread(img_path))
 
-    predicted_kind = knn.predict(new_sample)
+#     predicted_kind = knn.predict(new_sample)
 
-    return predicted_kind
+#     return predicted_kind
 
 
-def test_model_knn():
+# def test_model_knn():
     label_true = []
     label_predicted = []
     
