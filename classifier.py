@@ -5,8 +5,6 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
 from sklearn.model_selection import cross_val_score
 import cv2
@@ -52,10 +50,9 @@ def train_rf(df_local_path):
 
     le = LabelEncoder()
     Y_encoded = le.fit_transform(Y)
-    class_names = le.classes_
 
     X_train, X_test, Y_train, Y_test = train_test_split(
-        X, Y_encoded, test_size=0.2, random_state=42, stratify=Y_encoded
+        X, Y_encoded, test_size=0.1, random_state=42, stratify=Y_encoded
     )
 
     rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
@@ -65,6 +62,8 @@ def train_rf(df_local_path):
     Y_pred = rf_model.predict(X_test)
 
     accuracy = accuracy_score(Y_test, Y_pred)
+
+    print("Predicted training accuracy: " + str(accuracy))
 
     return rf_model, le
 
@@ -219,8 +218,4 @@ if __name__ == "__main__":
             continue
         else:
             break
-
-    # knn = train_knn(Xanders_Path)
-    # label_true, label_predicted = test_model_knn()
-    # plot_cm(label_true=label_true, label_predicted=label_predicted, labels=KINDS, title="Confusion matrix - knn")
     
