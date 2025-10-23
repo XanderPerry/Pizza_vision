@@ -163,7 +163,7 @@ if __name__ == "__main__":
     label_true, label_predicted = test_model_rf()
     plot_cm(label_true=label_true, label_predicted=label_predicted, labels=KINDS, title="Confusion matrix - RF")
 
-    knn = train_knn(Xanders_Path)
-    label_true, label_predicted = test_model_knn()
-    plot_cm(label_true=label_true, label_predicted=label_predicted, labels=KINDS, title="Confusion matrix - knn")
+    # knn = train_knn(Xanders_Path)
+    # label_true, label_predicted = test_model_knn()
+    # plot_cm(label_true=label_true, label_predicted=label_predicted, labels=KINDS, title="Confusion matrix - knn")
     
