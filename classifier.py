@@ -91,6 +91,7 @@ def test_model_rf(dataset="data", datagroup="validation"):
     
     for kind in KINDS:
         for filename in glob.glob(dataset + "/" + kind + "/" + datagroup + "/**/*.jpg", recursive=True):
+        # for filename in glob.glob("C:/HU/Jaar3/A/Beeldherkening/data set/data/" + kind + "/" + datagroup + "/**/*.jpg", recursive=True):
             print(filename)
             label_true.append(kind)
             img = cv2.imread(filename)
@@ -190,7 +191,7 @@ def random_loop():
 
 if __name__ == "__main__": 
     print("Starting model training...")
-    rf_model, le = train_rf(Xanders_Path)
+    rf_model, le = train_rf(Hayans_Path)
     print("Model trained!\n")
 
     print("Welcome to the PizzaVision demo program, please choose one of the following modes: "+str(MODES))

@@ -46,10 +46,9 @@ def get_next_images():
 
 def get_random_images(show_names=True, dataset="data_cutout", datagroup="train"):
     imgs = {}
-
     for kind in KINDS:
         # # Hayan's path #########################################################
-        # directory = "C:/HU/Jaar3/A/Beeldherkening/data_cutout/" + kind + "/train/"
+        # directory = "C:/HU/Jaar3/A/Beeldherkening/data set/data/" + kind + "/" + datagroup + "/"
         # # Hayan's path #########################################################
         directory = dataset + "/" + kind + "/" + datagroup + "/"
         filename = directory + random.choice(os.listdir(directory))
