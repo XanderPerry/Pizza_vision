@@ -171,3 +171,56 @@ def get_med_circles(img, testing=False):
         return len(circles[0,:])
     else:
         return 0
+    
+def get_blobcount_s(img):
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    params = cv2.SimpleBlobDetector_Params()
+
+    params.filterByArea = True
+    params.minArea = 50
+    params.maxArea = 100
+    params.filterByCircularity = False
+    params.filterByConvexity = False
+    params.filterByInertia = True
+
+    detector = cv2.SimpleBlobDetector_create(params)
+
+    keypoints = detector.detect(img_gray)
+    
+    return len(keypoints)
+
+def get_blobcount_m(img):
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    params = cv2.SimpleBlobDetector_Params()
+
+    params.filterByArea = True
+    params.minArea = 100
+    params.maxArea = 400
+    params.filterByCircularity = False
+    params.filterByConvexity = False
+    params.filterByInertia = True
+
+    detector = cv2.SimpleBlobDetector_create(params)
+
+    keypoints = detector.detect(img_gray)
+    
+    return len(keypoints)
+
+def get_blobcount_l(img):
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    params = cv2.SimpleBlobDetector_Params()
+
+    params.filterByArea = True
+    params.minArea = 400
+    params.filterByCircularity = False
+    params.filterByConvexity = False
+    params.filterByInertia = True
+
+    detector = cv2.SimpleBlobDetector_create(params)
+
+    keypoints = detector.detect(img_gray)
+    
+    return len(keypoints)

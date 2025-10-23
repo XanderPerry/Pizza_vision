@@ -20,8 +20,8 @@ import get_values_h
 KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
 MODES = ["random", "test", "validation"]
 
-Hayans_Path = "C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza12.csv"
-Xanders_Path = "pizza_dataframes\Pizza12.csv"
+Hayans_Path = "C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza15.csv"
+Xanders_Path = "pizza_dataframes\Pizza15.csv"
 
 def process_img(img):
     df = pd.DataFrame([{
@@ -35,7 +35,10 @@ def process_img(img):
         "Yellow percentage" :   get_values_h.get_yellow_percentages(img), 
         "Green percentage" :    get_values_h.get_green_percentages(img), 
         "circles_s" :           get_values_x.get_small_circles(img), 
-        "circles_m" :           get_values_x.get_med_circles(img)
+        "circles_m" :           get_values_x.get_med_circles(img),
+        "blobcount_s" :         get_values_x.get_blobcount_s(img),
+        "blobcount_m" :         get_values_x.get_blobcount_m(img),
+        "blobcount_l" :         get_values_x.get_blobcount_l(img)
     }])
 
     return df
@@ -192,7 +195,7 @@ def random_func():
                 color = (0, 100, 255)
 
             text = "True: " + kind + " | Predicted: " + predictions[kind] + " | " + result
-            imgs_res[kind] = cv2.putText(imgs_res[kind], text, (10, 10), cv2.FONT_HERSHEY_COMPLEX_SMALL,
+            imgs_res[kind] = cv2.putText(imgs_res[kind], text, (30, 30), cv2.FONT_HERSHEY_COMPLEX_SMALL,
                                             0.8, color, 1, cv2.LINE_AA)
 
         top_img = np.concatenate((imgs_res["che"], imgs_res["fun"], imgs_res["haw"]), axis = 1)
@@ -211,7 +214,9 @@ def random_func():
             print("New images.")
 
 if __name__ == "__main__": 
+    print("Starting model training...")
     rf_model, le = train_rf(Xanders_Path)
+    print("Model trained!\n")
 
     print("Welcome to the PizzaVision demo program, please choose one of the following modes: "+str(MODES))
 
