@@ -1,4 +1,4 @@
-##                               //this script for the demo\\
+##                               //this script a prototype of our first engine\\
 
 ##########################################################################################################
 ## Part 1:
@@ -33,19 +33,16 @@ from io import StringIO
 import msvcrt
 import time
 import cv2
-
 import get_values_x
 import get_values_h
-
 Hayans_Path = "C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza12.csv"
+# "C:/HU/Jaar3/A/Beeldherkening/data_cutout/moz/test/moz_0_A_00_Y_0000.jpg"           ## test images pathing
 Xanders_Path = "pizza_dataframes\Pizza12.csv"
 
-##################################################### Part 1: begin
 
 def Train_RF_with_DF(DF_local_Path, img_path=None):
     
 # --- 1. DATA SIMULATION (Using your CSV structure) ---
-#C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza10.csv
 # Load the data into a Pandas DataFrame
 
     df = pd.read_csv(DF_local_Path)
@@ -116,16 +113,8 @@ def Train_RF_with_DF(DF_local_Path, img_path=None):
     # --- 6. MAKING A NEW PREDICTION (The final decision) ---
 
     if(img_path):
-        new_sample = process_img(cv2.imread("data_cutout/che/test/che_0_A_00_Y_0000.jpg"))
+        new_sample = process_img(cv2.imread(img_path))
     else:
-        # # Define new, unseen features (e.g., from a new image)
-        # # This new sample looks like a 'che' (low hue, high sat, high LBP)
-        # new_sample = pd.DataFrame([{ # che72
-        #     'mean_hue': 17.44428853232465, 'mean_sat': 115.95940861855082, 'mean_val': 1141.27171415207533, 
-        #     'edge_percent': 16.42568075976654, 'fourth_LBP': 8252, 'eighth_LBP': 1538, 
-        #     'Red percentage': 7.410500171291538, 'Yellow percentage': 46.22302158273381, 
-        #     'Green percentage': 0.1006337786913326, 'circles_s': 3.0, 'circles_m': 1.0
-        # }])
         return
 
     # Use the model to predict the class
@@ -139,12 +128,6 @@ def Train_RF_with_DF(DF_local_Path, img_path=None):
     print(f"\nPredicted Kind (Decision): {predicted_kind}")
 
     return
-
-##################################################### Part 1: end
-
-
-
-##################################################### Part 2: begin
 
 def process_img(img):
     df = pd.DataFrame([{
@@ -163,32 +146,9 @@ def process_img(img):
 
     return df
 
-
-def main_loop():
-    
-
-    time.sleep(0.5)
-    return 
-
-
-##################################################### Part 2: end
-
-##################################################### Part 3: begin
-
-
-
-##################################################### Part 3: end
-
-##################################################### Part 4: begin
-
-
-
-##################################################### Part 4: end
-
-
-###################################################### MAIN
 def main():
-    Train_RF_with_DF(Xanders_Path, "data_cutout/haw/test/haw_0_A_00_Y_0000.jpg")
+    # C:/HU/Jaar3/A/Beeldherkening/data_cutout/" + kind + "/train/
+    Train_RF_with_DF(Hayans_Path, "C:/HU/Jaar3/A/Beeldherkening/data_cutout/moz/test/moz_0_A_00_Y_0000.jpg")
     print("Press ESC to stop the program.")
 
     while True:
@@ -197,11 +157,6 @@ def main():
             if key == b'\x1b':  # ESC key
                 print("ESC pressed. Exiting program...")
                 break
-        main_loop()
 
 if __name__ == "__main__":
     main()
-    # Y = process_img(cv2.imread("data_cutout/che/test/che_0_A_00_Y_0000.jpg"))
-    
-
-######################################################
