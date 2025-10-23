@@ -18,7 +18,7 @@ import get_values_x
 import get_values_h
 
 KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
-MODES = ["random", "test", "validation"]
+MODES = ["live", "random", "test", "validation"]
 
 Hayans_Path = "C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza15.csv"
 Xanders_Path = "pizza_dataframes\Pizza15.csv"
@@ -100,72 +100,7 @@ def test_model_rf(dataset="data", datagroup="validation"):
     accuracy = accuracy_score(label_true, label_predicted)
     print("Accuracy: "+str(accuracy))
 
-    return label_true, label_predicted
-
-# def train_knn(df_local_path):
-#     pizza_df = pd.read_csv(df_local_path)
-
-#     X = pizza_df.iloc[:, 2:].values
-#     y = pizza_df["kind"].values
-
-#     # x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
-
-#     # scaler = StandardScaler()
-#     # x_train = scaler.fit_transform(x_train)
-#     # x_test = scaler.transform(x_test)
-    
-#     highest_accuracy = 0
-#     best_n = 1
-#     scores = []
-
-#     print("test")
-#     for i in range(1, 31):
-#         knn = KNeighborsClassifier(n_neighbors=i)
-#         score = cross_val_score(knn, X, y, cv=5)
-#         scores.append(np.mean(score))
-
-#         # knn.fit(x_train, y_train)
-
-#         # y_pred = knn.predict(x_test)
-#         # accuracy = accuracy_score(y_test, y_pred)
-
-#         # if accuracy >= highest_accuracy:
-#         #     accuracy = highest_accuracy
-#         #     best_n = i
-
-#         # knn = KNeighborsClassifier(n_neighbors=best_n)
-#         # knn.fit(x_train, y_train)
-
-#     sns.lineplot(x = range(1,31), y = scores, marker = 'o')
-#     plt.xlabel("K Values")
-#     plt.ylabel("Accuracy Score")
-#     plt.show()
-
-#     return knn
-
-# def knn_predict(img_path):
-#     new_sample = process_img(cv2.imread(img_path))
-
-#     predicted_kind = knn.predict(new_sample)
-
-#     return predicted_kind
-
-
-# def test_model_knn():
-    label_true = []
-    label_predicted = []
-    
-    for kind in KINDS:
-        for filename in glob.glob("data_cutout/" + kind + "/test/**/*.jpg", recursive=True):
-            print(filename)
-            label_true.append(kind)
-            label_predicted.append(knn_predict(filename))                
-        
-    accuracy = accuracy_score(label_true, label_predicted)
-    print("Accuracy: "+str(accuracy))
-
-    return label_true, label_predicted
-    
+    return label_true, label_predicted    
 
 def plot_cm(label_true, label_predicted, labels=None, title="Confusion matrix"):
     cm = confusion_matrix(label_true, label_predicted, labels=labels)
@@ -174,7 +109,48 @@ def plot_cm(label_true, label_predicted, labels=None, title="Confusion matrix"):
     plt.title(title)
     plt.show()
 
-def random_func():
+def live_loop():
+    image_width = 640
+    image_height = 480
+    
+    # Initialize webcam
+    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    if not cap.isOpened():
+        print("Error: Could not access the webcam.")
+        exit()
+    
+    print("Starting image capture. Press 'q' to quit.")
+
+    while True:
+        ret, frame = cap.read()
+        
+        if not ret:
+            print("Failed to grab frame.")
+            break
+    
+        # Resize the frame (optional)
+        frame = cv2.resize(frame, (image_width, image_height))
+    
+        # Show the frame
+        cv2.imshow("Live feed (press 'q' to quit, 'n' to capture new frame)", frame)
+
+        key = cv2.waitKey(100)
+        if key & 0xFF == ord('q'):
+            print("Manual interruption by user.")
+            break
+        elif key & 0xFF == ord('n'):
+            unused, img = cap.read()
+            cv2.imshow("Captured image", img)
+            prediction = rf_predict(img)
+            text = "Prediction: " + prediction
+            img = cv2.putText(img, text, (30, 30), cv2.FONT_HERSHEY_COMPLEX_SMALL,
+                                            2, (0, 255, 0), 1, cv2.LINE_AA)
+            cv2.imshow("Captured image", img)
+
+    cv2.destroyAllWindows()
+    cap.release()
+
+def random_loop():
      while True:
         print("Press esc to exit, press another key for new images.")
 
@@ -225,8 +201,11 @@ if __name__ == "__main__":
         while not mode in MODES:
             mode = input("This mode is unsupported, please try again: ")
 
-        if mode == "random":
-           random_func()
+        if mode == "live":
+            live_loop()
+
+        elif mode == "random":
+            random_loop()
 
         elif mode == "test":
             label_true, label_predicted = test_model_rf(dataset="data", datagroup="test")
