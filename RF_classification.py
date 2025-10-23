@@ -1,4 +1,4 @@
-##                               //this script for the demo\\
+##                               //this script a prototype of our first engine\\
 
 ##########################################################################################################
 ## Part 1:
@@ -33,19 +33,16 @@ from io import StringIO
 import msvcrt
 import time
 import cv2
-
 import get_values_x
 import get_values_h
-
 Hayans_Path = "C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza12.csv"
+# "C:/HU/Jaar3/A/Beeldherkening/data_cutout/moz/test/moz_0_A_00_Y_0000.jpg"           ## test images pathing
 Xanders_Path = "pizza_dataframes\Pizza12.csv"
 
-##################################################### Part 1: begin
 
 def Train_RF_with_DF(DF_local_Path, img_path=None):
     
 # --- 1. DATA SIMULATION (Using your CSV structure) ---
-#C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza10.csv
 # Load the data into a Pandas DataFrame
 
     df = pd.read_csv(DF_local_Path)
@@ -139,12 +136,6 @@ def Train_RF_with_DF(DF_local_Path, img_path=None):
 
     return
 
-##################################################### Part 1: end
-
-
-
-##################################################### Part 2: begin
-
 def process_img(img):
     df = pd.DataFrame([{
         "mean_hue" :            get_values_x.get_mean_hue(img), 
@@ -162,30 +153,6 @@ def process_img(img):
 
     return df
 
-
-def main_loop():
-    
-
-    time.sleep(0.5)
-    return 
-
-
-##################################################### Part 2: end
-
-##################################################### Part 3: begin
-
-
-
-##################################################### Part 3: end
-
-##################################################### Part 4: begin
-
-
-
-##################################################### Part 4: end
-
-
-###################################################### MAIN
 def main():
     Train_RF_with_DF(Xanders_Path, "data_cutout/fun/test/fun_0_A_00_Y_0000.jpg")
     print("Press ESC to stop the program.")
@@ -196,11 +163,6 @@ def main():
             if key == b'\x1b':  # ESC key
                 print("ESC pressed. Exiting program...")
                 break
-        main_loop()
 
 if __name__ == "__main__":
     main()
-    # Y = process_img(cv2.imread("data_cutout/che/test/che_0_A_00_Y_0000.jpg"))
-    
-
-######################################################
