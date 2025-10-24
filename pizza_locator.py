@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Sep  8 15:13:31 2025
-
-@author: Xande
-"""
+# This script contains a first attempt at locating pizzas
 
 import numpy as np
 import matplotlib.pyplot as plt

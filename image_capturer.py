@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Sep  5 16:12:54 2025
+# This script is used to create a dataset by taking 10 pictures a second, 
+#   at given intervals the program will instruct set changes to the environment
 
-@author: Xande
-"""
 import cv2
 import os
 

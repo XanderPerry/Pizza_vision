@@ -1,6 +1,6 @@
+# This library contains the functions for data extraction written by Xander
+
 import numpy as np
-from skimage.feature import local_binary_pattern
-import statistics
 
 import cv2
 

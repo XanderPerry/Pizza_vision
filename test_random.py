@@ -1,3 +1,6 @@
+#   This library provides functions to retrieve a random image from each pizza dataset and 
+#       quickly apply functions and image modifications.
+
 import random
 import os
 import numpy as np

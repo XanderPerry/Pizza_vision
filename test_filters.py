@@ -1,3 +1,7 @@
+#   Generated with help from CoPilot
+
+#   This script unleashes a fuckton of filters on a image in hopes of finding something usefull
+
 import random
 import os
 import numpy as np

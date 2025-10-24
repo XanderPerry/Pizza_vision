@@ -2,12 +2,12 @@
 # Pizza data plotter             #
 ##################################
 
+#   This script is used to automatically plot values from csv files
+
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
-import glob
-import cv2
 
 import add_to_dataframe
 

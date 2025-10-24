@@ -1,4 +1,6 @@
 # Generated using CoPilot
+#
+# This script is used to quickly visually test different colormasks
 
 import cv2
 import numpy as np

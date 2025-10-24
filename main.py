@@ -1,3 +1,5 @@
+#   This script is used for function testing
+
 import cv2
 
 import pizza_cutter

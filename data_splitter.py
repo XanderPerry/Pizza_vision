@@ -1,4 +1,5 @@
-import cv2
+# This script is used to split the dataset pictures into three groups for use with testinf, training and validation
+
 import glob
 import shutil
 

@@ -1,5 +1,6 @@
+#   This library contains the necessary functions for image pre processing
+
 import numpy as np
-import time
 
 import cv2
 

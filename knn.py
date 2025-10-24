@@ -1,3 +1,6 @@
+#   This script uses a KNN classifier for pizza predictions, due to significantly inferior results compared to random forest
+#       this file is UNUSED.
+
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler

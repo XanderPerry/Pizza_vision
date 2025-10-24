@@ -1,3 +1,5 @@
+# This library contains the functions for data extraction written by Hayan
+
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,8 +9,6 @@ from skimage.feature import local_binary_pattern
 KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
 _kind_index = 0  # internal counter to track which name to use next
 _summary_data = []  # store (name, mean, variance) for scatter plot
-
-
 
 def get_red_percentages(img):
     if img is None:

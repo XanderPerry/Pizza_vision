@@ -1,3 +1,5 @@
+# This script is used to preprocess the dataset for quicker testing
+
 import cv2
 import glob
 import os
@@ -6,6 +8,11 @@ import pizza_cutter
 
 DIRECTORY = "C:/Users/Xande/EE cursusmateriaal/3A/Beeldherkenning/PizzaVisionRepo/Pizza_vision/"
 KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
+
+
+cut = input("Type 'y' to start cutout process: ")
+if cut != 'y':
+    exit(0)
 
 for kind in KINDS:
     print("starting " + kind)
