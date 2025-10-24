@@ -1,5 +1,6 @@
 import numpy as np
 from skimage.feature import local_binary_pattern
+import statistics
 
 import cv2
 
@@ -224,3 +225,52 @@ def get_blobcount_l(img):
     keypoints = detector.detect(img_gray)
     
     return len(keypoints)
+
+def get_cc_n(img):
+    img_gray = cv2.cvtColor(img , cv2.COLOR_BGR2GRAY)
+
+    img_blur = cv2.GaussianBlur(img_gray, (7, 7), 0)
+
+    threshold = cv2.threshold(img_blur, 0, 255,
+        cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+    
+    analysis = cv2.connectedComponentsWithStats(threshold,
+                                            4,
+                                            cv2.CV_32S)
+    
+    (n_connected_components, label_ids, values, centroid) = analysis
+
+    return n_connected_components
+
+def get_cc_mean(img):
+    img_gray = cv2.cvtColor(img , cv2.COLOR_BGR2GRAY)
+
+    img_blur = cv2.GaussianBlur(img_gray, (7, 7), 0)
+
+    threshold = cv2.threshold(img_blur, 0, 255,
+        cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+    
+    analysis = cv2.connectedComponentsWithStats(threshold,
+                                            4,
+                                            cv2.CV_32S)
+    
+    (n_connected_components, label_ids, values, centroid) = analysis
+
+    mean_connected_components = values.mean()
+
+    # print("mean_connected_components: " + str(mean_connected_components))
+
+    return mean_connected_components
+
+def get_cc_canny(img):
+    img_gray = cv2.cvtColor(img , cv2.COLOR_BGR2GRAY)
+
+    img_canny = cv2.Canny(img, 100, 200, )
+    
+    analysis = cv2.connectedComponentsWithStats(img_canny,
+                                            4,
+                                            cv2.CV_32S)
+    
+    (n_connected_components, label_ids, values, centroid) = analysis
+
+    return n_connected_components

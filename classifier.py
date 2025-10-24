@@ -18,8 +18,8 @@ import get_values_h
 KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
 MODES = ["live", "random", "test", "validation"]
 
-Hayans_Path = "C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza15.csv"
-Xanders_Path = "pizza_dataframes\Pizza15.csv"
+Hayans_Path = "C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza17.csv"
+Xanders_Path = "pizza_dataframes\Pizza17.csv"
 
 def process_img(img):
     df = pd.DataFrame([{
@@ -36,7 +36,9 @@ def process_img(img):
         "circles_m" :           get_values_x.get_med_circles(img),
         "blobcount_s" :         get_values_x.get_blobcount_s(img),
         "blobcount_m" :         get_values_x.get_blobcount_m(img),
-        "blobcount_l" :         get_values_x.get_blobcount_l(img)
+        "blobcount_l" :         get_values_x.get_blobcount_l(img),
+        "cc_count" :            get_values_x.get_cc_n(img),
+        "cc_mean" :             get_values_x.get_cc_mean(img)
     }])
 
     return df
@@ -191,7 +193,7 @@ def random_loop():
 
 if __name__ == "__main__": 
     print("Starting model training...")
-    rf_model, le = train_rf(Hayans_Path)
+    rf_model, le = train_rf(Xanders_Path)
     print("Model trained!\n")
 
     print("Welcome to the PizzaVision demo program, please choose one of the following modes: "+str(MODES))

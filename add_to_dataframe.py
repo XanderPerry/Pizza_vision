@@ -84,4 +84,4 @@ def add_values(func, label):
     return
 
 if __name__ == "__main__":    
-    add_values(get_values_x.get_blobcount_l, "blobcount_l")
+    add_values(get_values_x.get_cc_mean, "cc_mean")

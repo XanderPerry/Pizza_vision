@@ -72,6 +72,8 @@ def violinplot():
     
     sns.violinplot(x="kind", y=y, hue="kind", data=pizza_df)
 
+    plt.suptitle(y)
+
     sns.despine(f, left=True, bottom=True)
     plt.show()
 
