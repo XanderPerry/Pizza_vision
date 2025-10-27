@@ -72,7 +72,7 @@ def violinplot():
     
     sns.violinplot(x="kind", y=y, hue="kind", data=pizza_df)
 
-    plt.suptitle(y)
+    plt.suptitle(y+" across kinds")
 
     sns.despine(f, left=True, bottom=True)
     plt.show()

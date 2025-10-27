@@ -18,8 +18,8 @@ import get_values_h
 KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
 MODES = ["live", "random", "test", "validation"]
 
-Hayans_Path = "C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza17.csv"
-Xanders_Path = "pizza_dataframes\Pizza17.csv"
+Hayans_Path = "C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza19.csv"
+Xanders_Path = "pizza_dataframes\Pizza19.csv.csv"
 
 def process_img(img):
     df = pd.DataFrame([{
@@ -38,7 +38,10 @@ def process_img(img):
         "blobcount_m" :         get_values_x.get_blobcount_m(img),
         "blobcount_l" :         get_values_x.get_blobcount_l(img),
         "cc_count" :            get_values_x.get_cc_n(img),
-        "cc_mean" :             get_values_x.get_cc_mean(img)
+        "cc_mean" :             get_values_x.get_cc_mean(img),
+        "mean_des_sift" :       get_values_x.get_mean_des_sift(img),
+        "n_sift" :              get_values_x.get_n_sift(img),
+        "cc_mean_area" :        get_values_x.get_cc_mean_area(img)
     }])
 
     return df
@@ -154,7 +157,13 @@ def live_loop():
 
 def random_loop():
      while True:
-        print("Press esc to exit, press another key for new images.")
+        print("Press 'q' to exit, press another key for new images.")
+
+        load_img = np.zeros((int(480*2*0.7), int(640*3*0.7), 3), dtype = np.uint8)
+        load_img = cv2.putText(load_img, "Loading...", (400, 350), cv2.FONT_HERSHEY_COMPLEX_SMALL,
+                                        5, (0, 255, 0), 2, cv2.LINE_AA)
+        cv2.imshow("Results", load_img)
+        key = cv2.waitKey(1)
 
         imgs = test_random.get_random_images(dataset="data", datagroup="validation")
         predictions = test_random.apply_function(rf_predict, imgs)
@@ -184,11 +193,10 @@ def random_loop():
 
         key = cv2.waitKey(0)
         cv2.destroyAllWindows()
-        if key& 0xFF == 27:
+        if key & 0xFF == ord('q'):
             print("Exiting...")
             break
         else:
-            cv2.destroyAllWindows()
             print("New images.")
 
 if __name__ == "__main__": 

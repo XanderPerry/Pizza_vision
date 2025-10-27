@@ -258,19 +258,45 @@ def get_cc_mean(img):
 
     mean_connected_components = values.mean()
 
-    # print("mean_connected_components: " + str(mean_connected_components))
-
     return mean_connected_components
 
-def get_cc_canny(img):
+def get_cc_mean_area(img):
     img_gray = cv2.cvtColor(img , cv2.COLOR_BGR2GRAY)
 
-    img_canny = cv2.Canny(img, 100, 200, )
+    img_blur = cv2.GaussianBlur(img_gray, (7, 7), 0)
+
+    threshold = cv2.threshold(img_blur, 0, 255,
+        cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
     
-    analysis = cv2.connectedComponentsWithStats(img_canny,
+    analysis = cv2.connectedComponentsWithStats(threshold,
                                             4,
                                             cv2.CV_32S)
     
     (n_connected_components, label_ids, values, centroid) = analysis
 
-    return n_connected_components
+    areas = values[1:, cv2.CC_STAT_AREA]
+
+    return areas.mean()
+
+def get_mean_des_sift(img):
+    gray= cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+
+    sift = cv2.SIFT_create()
+    kp = sift.detect(gray, None)
+
+    kp_filtered = [i for i in kp if i.response >= 0.05]
+
+    kp_filtered, des = sift.compute(gray, kp_filtered)
+
+
+    return des.mean()
+
+def get_n_sift(img):
+    gray= cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+
+    sift = cv2.SIFT_create()
+    kp = sift.detect(gray, None)
+
+    kp_filtered = [i for i in kp if i.response >= 0.05]
+
+    return len(kp_filtered)
