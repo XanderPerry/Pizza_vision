@@ -7,6 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
 from sklearn.model_selection import cross_val_score
+from sklearn import tree
 import cv2
 import glob
 
@@ -16,7 +17,8 @@ import get_values_x
 import get_values_h
 
 KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
-MODES = ["live", "random", "test", "validation"]
+FEATURES = ["mean_hue", "mean_sat", "mean_val", "edge_percent", "fourth_LBP", "eighth_LBP", "Red percentage", "Yellow percentage", "Green percentage", "circles_s", "circles_m", "blobcount_s", "blobcount_m", "blobcount_l","cc_count", "cc_mean", "mean_des_sift", "n_sift", "cc_mean_area"]
+MODES = ["live", "random", "test", "validation", "tree"]
 
 Hayans_Path = "C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza19.csv"
 Xanders_Path = "pizza_dataframes\Pizza19.csv"
@@ -132,11 +134,9 @@ def live_loop():
         if not ret:
             print("Failed to grab frame.")
             break
-    
-        # Resize the frame (optional)
+
         frame = cv2.resize(frame, (image_width, image_height))
     
-        # Show the frame
         cv2.imshow("Live feed (press 'q' to quit, 'n' to capture new frame)", frame)
 
         key = cv2.waitKey(100)
@@ -199,6 +199,22 @@ def random_loop():
         else:
             print("New images.")
 
+def show_tree():
+    new_tree = True
+    while new_tree:
+        plt.figure(figsize=(25,20))
+        _ = tree.plot_tree(rf_model.estimators_[0],
+                        feature_names=FEATURES,
+                        class_names=KINDS,
+                        filled=True)
+        plt.show()
+
+        if input("would you like another plot?(y/n) ").lower() in ["y", "yes"]:
+            new_tree = True
+        else:
+            new_tree = False
+        
+
 if __name__ == "__main__": 
     print("Starting model training...")
     rf_model, le = train_rf(Xanders_Path)
@@ -224,6 +240,9 @@ if __name__ == "__main__":
         elif mode == "validation":
             label_true, label_predicted = test_model_rf(dataset="data", datagroup="validation")
             plot_cm(label_true=label_true, label_predicted=label_predicted, labels=KINDS, title="Confusion matrix - RF")
+
+        elif mode == "tree":
+            show_tree()
 
         if input("would you like another test?(y/n) ").lower() in ["y", "yes"]:
             continue
