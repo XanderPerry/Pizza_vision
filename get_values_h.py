@@ -1,30 +1,34 @@
 # This library contains the functions for feature extraction written by Hayan, all functions take a image as input and output 
 #   one value so they can be used in the functions from test_random.py and add_to_dataframe.py
 
-
+# Librarie imports
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage.feature import local_binary_pattern
 
-# Predefined image names
+# Predefined image names for the ploting.
 KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
-_kind_index = 0  # internal counter to track which name to use next
-_summary_data = []  # store (name, mean, variance) for scatter plot
-
+# internal counter to track which name to use next
+_kind_index = 0 
+# store (name, mean, variance) for scatter plot
+_summary_data = []  
 def get_red_percentages(img):
+    """This function returns the total red percentage of the input image"""
     if img is None:
         return None
-    # Define the range for red color in HSV
+    # Range of darker red to get the biggest differance between the sets.
     lower_red1 = np.array([0, 50, 50])
     upper_red1 = np.array([10, 255, 255])
     lower_red2 = np.array([170, 70, 50])
     upper_red2 = np.array([180, 255, 255])
-    
+
 
     # Convert from BGR to HSV color space
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    exclude_black_pixels = hsv[:, :, 2] > 20  # exclude very dark/black pixels
+
+    # Exclude very dark/black pixels which helps exclude the background that would be already made black in another function.
+    exclude_black_pixels = hsv[:, :, 2] > 20  
 
     # Create masks for the red regions
     mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
@@ -39,7 +43,7 @@ def get_red_percentages(img):
     return red_percentage
 
 def get_green_percentages(img):
-
+    """This function returns the total green percentage of the input image"""
     if img is None:
         return None
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -48,8 +52,9 @@ def get_green_percentages(img):
     # (extend to include dark greens, based on what our data set has)
     lower_green = np.array([35, 30, 30])
     upper_green = np.array([90, 255, 255])
-    
-    exclude_black_pixels = hsv[:, :, 2] > 20  # exclude very dark/black pixels
+
+    # exclude very dark/black pixels
+    exclude_black_pixels = hsv[:, :, 2] > 20 
 
     mask = cv2.inRange(hsv, lower_green, upper_green)
     green_pixels = np.count_nonzero(mask[exclude_black_pixels])
@@ -58,6 +63,7 @@ def get_green_percentages(img):
     return green_percentage
 
 def get_yellow_percentages(img):
+    """This function returns the total yellow percentage of the input image"""
     if img is None:
         return None
     yellow_percentage = 0
@@ -78,14 +84,17 @@ def get_yellow_percentages(img):
 
 
 def get_LBP(img):
+    """This function calculates the LBP in a histogram of 8 bins and returns the data, the histogram en the bins"""
     if img is None:
         print(f"Could not read image by get_LBP")
         return
     
-    # P = Number of circularly symmetric neighbor points. (8 for the test only)
+    # P = Number of circularly symmetric neighbor points. (8 tested relatively the best in general)
     P = 8
     # R = Radius of circle.
     R = 1
+
+    # Converte to gray
     grayed = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     LBP_data = local_binary_pattern(grayed, P, R, method='uniform')
 
@@ -99,13 +108,12 @@ def get_LBP(img):
     # print(hist)
     # print("\nbins:")
     # print(bins)
-
-    # plot_LBP_results(img, LBP_data, hist, bins) ######## for visual testing
+    # plot_LBP_results(img, LBP_data, hist, bins) # for visual testing
 
     return LBP_data, hist, bins
-    # 
 
 def get_fourth_element_LBP(img):
+    """This function calls the LBP function and gets the value of the 4th bin and returns it <Zie verslag voor de redenen> """
     lbp_output = get_LBP(img)
 
     if lbp_output is None:
@@ -117,10 +125,12 @@ def get_fourth_element_LBP(img):
     if len(hist) < 4:
         print("Histogram has less than 4 bins")
         return None
-        
-    return hist[3]  # 4th element (0-indexed)
+    
+    # 4th element (0-indexed)
+    return hist[3]  
 
 def get_eighth_element_LBP(img):
+    """This function calls the LBP function and gets the value of the 8th bin and returns it <Zie verslag voor de redenen> """
     lbp_output = get_LBP(img)
 
     if lbp_output is None:
@@ -132,12 +142,14 @@ def get_eighth_element_LBP(img):
     if len(hist) < 8:
         print("Histogram has less than 4 bins")
         return None
-        
-    return hist[7]  # 8th element (0-indexed)
+    # 8th element (0-indexed)
+    return hist[7]  
 
 
 def plot_LBP_results(img, LBP_data, hist, bins):
     """Displays the original image, LBP result, and histogram with auto-naming."""
+
+    # this plotting function was used to get the most important values of bins to then only aad the useful ones to the data via Add_to_dataframe.
     global _kind_index, _summary_data
 
     # Cycle through the KINDS list
@@ -149,11 +161,9 @@ def plot_LBP_results(img, LBP_data, hist, bins):
     axs[0].imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     axs[0].set_title(f"Original Image - {name}")
     axs[0].axis("off")
-
     axs[1].imshow(LBP_data, cmap='gray')
     axs[1].set_title(f"LBP Image - {name}")
     axs[1].axis("off")
-
     axs[2].bar(bins[:-1], hist, width=0.7, color='gray', edgecolor='black')
     axs[2].set_title(f"LBP Histogram - {name}")
     axs[2].set_xlabel("LBP Value")
@@ -162,12 +172,12 @@ def plot_LBP_results(img, LBP_data, hist, bins):
     plt.tight_layout()
     # plt.show()
     
-    # --- Store data for summary plot ---
+    #Store data for summary plot ---
     mean_val = np.mean(hist)
     var_val = np.var(hist)
     _summary_data.append((name, mean_val, var_val, hist, bins))
 
-    # --- After all 6 are processed ---
+    # After all 6 kinds are processed ---
     if len(_summary_data) == len(KINDS):
         plot_summary_scatter(_summary_data)
         plot_all_histograms(_summary_data)
@@ -179,7 +189,7 @@ def plot_LBP_results(img, LBP_data, hist, bins):
 
 
 def plot_summary_scatter(summary_data):
-    """Plot a scatter showing mean vs variance for each image’s LBP histogram."""
+    """Plot a scatter showing mean vs variance for each images LBP histogram."""
     names = [d[0] for d in summary_data]
     means = [d[1] for d in summary_data]
     vars_ = [d[2] for d in summary_data]
@@ -199,7 +209,7 @@ def plot_summary_scatter(summary_data):
 
 
 def plot_all_histograms(summary_data):
-    """Plot all LBP histograms together for comparison."""
+    """Plot all LBP histograms together for comparison <Zie verslag>."""
     plt.figure(figsize=(10, 6))
     for name, _, _, hist, bins in summary_data:
 

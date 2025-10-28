@@ -10,6 +10,7 @@ test_count = 50
 image_width = 640
 image_height = 480
 
+#User input
 pizza_type = input("Which pizza are you going to photograph? ")
 
 save_dir_train = f"data/{pizza_type}/train"
@@ -19,14 +20,18 @@ save_dir_test = f"data/{pizza_type}/test"
 os.makedirs(save_dir_train, exist_ok=True)
 os.makedirs(save_dir_test, exist_ok=True)
 
+# for the logic of naming the photos, look in the report <verslag>
 pizza_types = ["mar", "sal", "che", "haw", "fun", "moz", "test"]
 background_types = ["0", "1"]
 light_types = ["A", "B"]
 training = "X"
 test = "Y"
 
+# 6 pizza types
 if pizza_type in pizza_types:
+    # 2 backgrounds
     for background in background_types:
+        # 2 light conditions.
         for light in light_types:
             print("\nAbout to start capturing for parameters:")
             print(f"Pizza = {pizza_type}")
@@ -78,6 +83,3 @@ if pizza_type in pizza_types:
             print("Image capture completed.")
             cv2.destroyAllWindows()
             cap.release()
-
-
-# gezien

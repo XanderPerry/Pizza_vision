@@ -1,14 +1,16 @@
-#   This library contains the necessary functions for image pre processing
+#   This library contains the necessary functions for image pre processing mainly responsible for cutting the pizza's out of the frame,
+#       and making the background black if needed.
 
 import numpy as np
-
 import cv2
 
+# Needed for the return if the isolation of the pizza did not work.
 IMG_W = 640
 IMG_H = 480
 
 clahe_obj = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
 
+# enhance the contrast of the input image
 def clahe(img):
     # Convert the image from BGR to LAB color space
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
@@ -27,21 +29,21 @@ def clahe(img):
 
     return img_clahe
 
+# Helps with location the pizza.
 def whitebalance(img):
     # Convert the image from BGR to LAB color space
     img_whitebalanced = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
 
-    # Calculate the average values of the 'a' and 'b' channels
+    # average values of the 'a' and 'b' channels
     avg_a = np.average(img_whitebalanced[:, :, 1])
     avg_b = np.average(img_whitebalanced[:, :, 2])
 
     # Adjust the 'a' and 'b' channels to correct color cast
-    # The adjustment is proportional to the luminance channel (L)
     luminance_scaled = img_whitebalanced[:, :, 0] / 255.0
     img_whitebalanced[:, :, 1] = img_whitebalanced[:, :, 1] - ((avg_a - 128) * luminance_scaled * 1.1)
     img_whitebalanced[:, :, 2] = img_whitebalanced[:, :, 2] - ((avg_b - 128) * luminance_scaled * 1.1)
 
-    # Clip the 'a' and 'b' channels to [0, 255] to avoid invalid values
+    # Clip a and b channels to [0, 255] to avoid invalid values
     img_whitebalanced[:, :, 1] = np.clip(img_whitebalanced[:, :, 1], 0, 255)
     img_whitebalanced[:, :, 2] = np.clip(img_whitebalanced[:, :, 2], 0, 255)
     img_whitebalanced = img_whitebalanced.astype(np.uint8)
@@ -51,6 +53,7 @@ def whitebalance(img):
 
     return img_whitebalanced
 
+# Applying bot color correction functions.S
 def color_correct(img):
     img_colorcorrected = clahe(img)
 
@@ -59,7 +62,8 @@ def color_correct(img):
     return img_colorcorrected
 
 def calc_sobel(img_gray):
-    # Apply Sobel operator
+    # Apply Sobel operator (to be chosen byt the user when calling the cutout function)
+    # Sobel gave the best results.
     sobelx = cv2.Sobel(img_gray, cv2.CV_64F, 1, 0, ksize=3)  # Horizontal edges
     sobely = cv2.Sobel(img_gray, cv2.CV_64F, 0, 1, ksize=3)  # Vertical edges
     
@@ -72,7 +76,7 @@ def calc_sobel(img_gray):
     return gradient_magnitude
 
 def calc_laplacian(img_gray):
-    # Apply Laplacian operator
+    # Apply Laplacian operator (to be chosen byt the user)
     laplacian = cv2.Laplacian(img_gray, cv2.CV_64F)
      
     # Convert to uint8
@@ -81,7 +85,7 @@ def calc_laplacian(img_gray):
     return laplacian_abs
 
 def calc_canny(img_gray):
-    # Apply Gaussian Blur to reduce noise
+    # Apply Gaussian Blur to reduce noise (to be chosen byt the user)
     blur = cv2.GaussianBlur(img_gray, (5, 5), 1)
      
     # Apply Canny Edge Detector
@@ -90,10 +94,10 @@ def calc_canny(img_gray):
     return edges
 
 def hough_detect_circle(img_gray, img):
-    # Use a faster blur (box filter) instead of medianBlur
+    # Use a faster blur (box filter) instead of medianBlur because that took a lot of time.
     img_gray = cv2.blur(img_gray, (5, 5))
 
-    # Detect circles
+    # tooned to detect circles
     circles = cv2.HoughCircles(
         img_gray,
         cv2.HOUGH_GRADIENT,
@@ -118,6 +122,7 @@ def hough_detect_circle(img_gray, img):
     return img
 
 def cutout_circle(img, edge_detection="sobel"):
+    """ takes an image and the type of preprocessing filter to return the cutout pizza image """
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     if edge_detection == "sobel":
@@ -187,6 +192,8 @@ def crop_image(img):
     return img_cropped
 
 def cut_pizza(img):
+# go through all process te return the cutout image with black background.
+
     img_cutout = color_correct(img)
 
     img_cutout = crop_image(img_cutout)
