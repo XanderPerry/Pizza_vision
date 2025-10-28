@@ -19,7 +19,7 @@ KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
 MODES = ["live", "random", "test", "validation"]
 
 Hayans_Path = "C:\HU\Jaar3\A\Beeldherkening\Pizza_vision\pizza_dataframes\Pizza19.csv"
-Xanders_Path = "pizza_dataframes\Pizza19.csv.csv"
+Xanders_Path = "pizza_dataframes\Pizza19.csv"
 
 def process_img(img):
     df = pd.DataFrame([{

@@ -288,8 +288,10 @@ def get_mean_des_sift(img):
 
     kp_filtered, des = sift.compute(gray, kp_filtered)
 
-
-    return des.mean()
+    try:
+        return des.mean()
+    except:
+        return 0
 
 def get_n_sift(img):
     gray= cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
