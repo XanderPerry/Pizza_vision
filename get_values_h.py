@@ -1,4 +1,6 @@
-# This library contains the functions for data extraction written by Hayan
+# This library contains the functions for feature extraction written by Hayan, all functions take a image as input and output 
+#   one value so they can be used in the functions from test_random.py and add_to_dataframe.py
+
 
 import cv2
 import numpy as np

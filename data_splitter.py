@@ -1,10 +1,13 @@
 # This script is used to split the dataset pictures into three groups for use with testinf, training and validation
 
+#   Library imports
 import glob
 import shutil
 
+#   Define pizza kinds
 KINDS = ["che", "fun", "haw", "mar", "moz", "sal"]
 
+#   Loop over pizza kinds
 for kind in KINDS:
     for_test = True
     i = 0

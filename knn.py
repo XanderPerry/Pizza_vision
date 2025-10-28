@@ -6,13 +6,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score
 import pandas as pd
-import numpy as np
 import cv2
 
 import get_values_h
 import get_values_x
 
 def process_img(img):
+    """This function creates a dataframe of the features extracted from the input image"""
+    #   Fill dataframe using the feature extraction functions
     df = pd.DataFrame([{
         "mean_hue" :            get_values_x.get_mean_hue(img), 
         "mean_sat" :            get_values_x.get_mean_sat(img), 
@@ -29,46 +30,29 @@ def process_img(img):
 
     return df
 
-    # list = []
-    # list.append(get_values_x.get_mean_hue(img))
-    # list.append(get_values_x.get_mean_sat(img))
-    # list.append(get_values_x.get_mean_val(img))
-    # list.append(get_values_x.get_edge_percentage(img))
-    # list.append(get_values_h.get_fourth_element_LBP(img))
-    # list.append(get_values_h.get_eighth_element_LBP(img))
-    # list.append(get_values_h.get_red_percentages(img))
-    # list.append(get_values_h.get_yellow_percentages(img))
-    # list.append(get_values_h.get_green_percentages(img))
-    # list.append(get_values_x.get_small_circles(img))
-    # list.append(get_values_x.get_med_circles(img))
-    
-    # return [list]
+#   Only run if this file is __main__
+if __name__ == "__main__":
+    #   Load feature .csv file to dataframe
+    pizza_df = pd.read_csv("pizza_dataframes/Pizza12.csv")
 
-pizza_df = pd.read_csv("pizza_dataframes/Pizza12.csv")
+    #   Create features dataset containing only features
+    x = pizza_df.iloc[:, 2:].values
+    #   Create label dataset containing true labels
+    y = pizza_df["kind"].values
 
-x = pizza_df.iloc[:, 2:].values
-y = pizza_df["kind"].values
+    #   Split into training and testing data
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+    #   Scale feature values for use in KNN
+    scaler = StandardScaler()
+    x_train = scaler.fit_transform(x_train)
+    x_test = scaler.transform(x_test)
 
-scaler = StandardScaler()
-x_train = scaler.fit_transform(x_train)
-x_test = scaler.transform(x_test)
+    #   Create and fit KNN classifier
+    knn = KNeighborsClassifier(n_neighbors=10)
+    knn.fit(x_train, y_train)
 
-# for i in range(1, 200, 10):
-#     knn = KNeighborsClassifier(n_neighbors=i)
-#     knn.fit(x_train, y_train)
-
-#     y_pred = knn.predict(x_test)
-#     accuracy = accuracy_score(y_test, y_pred)
-#     print("Accuracy " + str(i) + ": ", accuracy)
-
-knn = KNeighborsClassifier(n_neighbors=10)
-knn.fit(x_train, y_train)
-
-y_pred = knn.predict(x_test)
-accuracy = accuracy_score(y_test, y_pred)
-print("Accuracy: " + str(accuracy))
-
-print("prediction: ")
-print(knn.predict(process_img(cv2.imread("data_cutout/moz/test/moz_1_B_00_Y_0075.jpg"))))
+    #   Test KNN classifier
+    y_pred = knn.predict(x_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    print("Accuracy: " + str(accuracy))
